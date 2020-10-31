@@ -1,0 +1,232 @@
+---
+openapi: 3.0.0
+info:
+  title: Simple Inventory API
+  description: This is a simple API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/SVGTOPPT/SVGToPPTAPI/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: router
+- name: conversion-configuration
+- name: auth
+- name: conversion-status
+- name: user-interface
+- name: svg-parser
+- name: ppt-exporter
+paths:
+  /login:
+    post:
+      tags:
+      - auth
+      - router
+      summary: Bejelentkezés
+      description: Lehetőséget ad a felhasználónak bejelentkezésre
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Felhasználónév
+                password:
+                  type: string
+                  description: Jelszó
+                  format: password
+      responses:
+        "200":
+          description: Sikeres bejelentkezés
+        "401":
+          description: Sikertelen bejelentkezés
+  /register:
+    post:
+      tags:
+      - auth
+      - router
+      summary: Regisztráció
+      description: Lehetőséget ad a felhasználónak regisztrációra
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName:
+                  type: string
+                  description: Teljes név
+                username:
+                  type: string
+                  description: Felhasználónév
+                password:
+                  type: string
+                  description: Jelszó
+                  format: password
+      responses:
+        "200":
+          description: Sikeres regisztráció
+  /logout:
+    post:
+      tags:
+      - auth
+      - router
+      summary: Kijelentkezés
+      description: Lehetőséget ad a felhasználónak kijelentkezésre
+      responses:
+        "200":
+          description: Sikeres regisztráció
+  /configuration:
+    get:
+      tags:
+      - conversion-configuration
+      - router
+      summary: Jelenlegi konfiguráció lekérése
+      responses:
+        "200":
+          description: Sikeres lekérés
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+    put:
+      tags:
+      - conversion-configuration
+      - router
+      summary: Konfiguráció módosítása
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Configuration'
+      responses:
+        "200":
+          description: Sikeres módosítás
+  /status:
+    get:
+      tags:
+      - conversion-status
+      - router
+      summary: Folyamat státuszának lekérdezése
+      responses:
+        "200":
+          description: Sikeres státusz lekérdezés
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                    - queued
+                    - svgParsing
+                    - pptGeneration
+                    - finished
+                  startTime:
+                    type: string
+                    format: date-time
+  /files:
+    get:
+      tags:
+      - conversion-configuration
+      - router
+      summary: Feltöltött fájlok listájának lekérdezése
+      responses:
+        "200":
+          description: Sikeres fájl lista lekérdezés
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+    post:
+      tags:
+      - conversion-configuration
+      - router
+      summary: Új fájlt feltöltése
+      requestBody:
+        content:
+          application/vnd.ms-powerpoint:
+            schema:
+              $ref: '#/components/schemas/BinaryFile'
+          application/vnd.openxmlformats-officedocument.presentationml.presentation:
+            schema:
+              $ref: '#/components/schemas/BinaryFile'
+      responses:
+        "200":
+          description: Sikeres feltöltés
+  /files/{id}:
+    get:
+      tags:
+      - conversion-status
+      - router
+      summary: Fájl letöltése
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: Fájl letöltése sikeres
+          content:
+            application/vnd.openxmlformats-officedocument.presentationml.presentation:
+              schema:
+                $ref: '#/components/schemas/BinaryFile'
+  /startSvg:
+    post:
+      tags:
+      - svg-parser
+      responses:
+        "200":
+          description: SVG feldolgozás indítása sikeres
+  /startPpt:
+    post:
+      tags:
+      - ppt-exporter
+      responses:
+        "200":
+          description: PPT generálás indítása sikeres
+components:
+  schemas:
+    BinaryFile:
+      type: string
+      format: binary
+    Configuration:
+      type: object
+      properties:
+        afterSlide:
+          type: integer
+          description: Ez után a dia utára lesznek beszúrva a képek
+        maxImages:
+          type: integer
+          description: Legfeljebb ennyi kép szúrható be
+        animation:
+          type: string
+          enum:
+          - simple
+        pptFileId:
+          type: integer
+        svgFileId:
+          type: integer
+          nullable: false
