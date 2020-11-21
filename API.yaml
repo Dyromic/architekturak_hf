@@ -217,7 +217,7 @@ components:
       properties:
         afterSlide:
           type: integer
-          description: Ez után a dia utára lesznek beszúrva a képek
+          description: Ez után a dia utánra lesznek beszúrva a képek
         maxImages:
           type: integer
           description: Legfeljebb ennyi kép szúrható be
