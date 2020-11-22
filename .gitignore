@@ -1,2 +1,5 @@
 database/data/*
 database/data/*/!.gitkeep
+services/*/*/bin/*
+services/*/*/obj/*
+services/*/*/.vs/*

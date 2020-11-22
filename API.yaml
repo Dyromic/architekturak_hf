@@ -207,6 +207,13 @@ paths:
       responses:
         "200":
           description: PPT generálás indítása sikeres
+  /start:
+    post:
+      tags:
+      - conversion-configuration
+      responses:
+        "200":
+          description: Feldolgozás indítása sikeres
 components:
   schemas:
     BinaryFile:
