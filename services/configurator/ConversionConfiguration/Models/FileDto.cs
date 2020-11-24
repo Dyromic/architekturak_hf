@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace ConversionConfiguration.Models
 {
-    public class FileElement
+    public class FileDto
     {
-        int Id { get; set; }
-        string name { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

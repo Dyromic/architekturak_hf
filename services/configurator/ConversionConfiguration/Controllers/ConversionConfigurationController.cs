@@ -1,8 +1,10 @@
 ﻿using api;
 using ConversionConfiguration.Models;
+using ConversionConfiguration.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,34 +21,45 @@ namespace ConversionConfiguration.Controllers
         };
 
         private readonly ILogger<ConversionConfigurationController> _logger;
+        private readonly FileService _fileService;
+        private readonly ConfigService _configService;
 
-        public ConversionConfigurationController(ILogger<ConversionConfigurationController> logger)
+        public ConversionConfigurationController(ILogger<ConversionConfigurationController> logger,
+            FileService fileService, ConfigService configService)
         {
             _logger = logger;
+            _fileService = fileService;
+            _configService = configService;
         }
 
         [HttpGet("files")]
-        public async Task<ActionResult<List<FileElement>>> GetFiles()
+        public async Task<ActionResult<List<FileDto>>> GetFiles()
         {
-            throw new NotImplementedException();
+            return await _fileService.Get();
         }
 
         [HttpPost("files")]
-        public async Task<IActionResult> PostFiles(IFormFile file)
+        public async Task<IActionResult> PostFiles([FromForm] IFormFile file)
         {
-            throw new NotImplementedException();
+            if (file == null)
+            {
+                return BadRequest();
+            }
+            await _fileService.Add(file.FileName, file.OpenReadStream());
+            return Ok();
         }
 
         [HttpGet("configuration")]
-        public async Task<ActionResult<ConfigurationDto>> GetConfigutation()
+        public async Task<ActionResult<ConfigDto>> GetConfigutation()
         {
-            throw new NotImplementedException();
+            return await _configService.Get();
         }
 
         [HttpPut("configuration")]
-        public async Task<IActionResult> PostConfiguration(ConfigurationDto config)
+        public async Task<IActionResult> PutConfiguration(ConfigDto config)
         {
-            throw new NotImplementedException();
+            await _configService.Put(config);
+            return Ok();
         }
     }
 }

@@ -123,7 +123,7 @@ paths:
                 type: object
                 properties:
                   id:
-                    type: integer
+                    type: string
                   name:
                     type: string
                   status:
@@ -153,14 +153,14 @@ paths:
                   type: object
                   properties:
                     id:
-                      type: integer
+                      type: string
                     name:
                       type: string
     post:
       tags:
       - conversion-configuration
       - router
-      summary: Új fájlt feltöltése
+      summary: Új fájl feltöltése
       requestBody:
         content:
           application/vnd.ms-powerpoint:
@@ -172,6 +172,9 @@ paths:
       responses:
         "200":
           description: Sikeres feltöltés
+          content:
+            schema:
+              $ref: '#components/schemas/SingleId'
   /files/{id}:
     get:
       tags:
@@ -185,7 +188,7 @@ paths:
         style: simple
         explode: false
         schema:
-          type: integer
+          type: string
       responses:
         "200":
           description: Fájl letöltése sikeres
@@ -216,6 +219,12 @@ paths:
           description: Feldolgozás indítása sikeres
 components:
   schemas:
+    SingleId:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Objektum azonosítója
     BinaryFile:
       type: string
       format: binary
@@ -233,7 +242,7 @@ components:
           enum:
           - simple
         pptFileId:
-          type: integer
+          type: string
         svgFileId:
-          type: integer
+          type: string
           nullable: false
