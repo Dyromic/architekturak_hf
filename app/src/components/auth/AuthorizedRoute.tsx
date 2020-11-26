@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Route, Redirect } from "react-router-dom";
+import { Route, Redirect, useHistory } from "react-router-dom";
 
 import { useJWTAuth } from '../../features/auth/JWTAuth'
 
@@ -10,32 +10,32 @@ export enum Visibility {
 };
 
 type AuthMethodInterface = any;
+type AuthMethodHook = () => AuthMethodInterface;
 
 interface AuthorizedRouteProps {
+  exact?: boolean,
+  path: string,
+  component: React.ComponentType<any>,
   visible: Visibility,
   redirect: string,
-  useAuthMethod: () => AuthMethodInterface
+  useAuthMethod: AuthMethodHook
 };
 
 
-export const AuthorizedRoute: FC<AuthorizedRouteProps> = ({ children, visible, redirect, useAuthMethod = useJWTAuth, ...rest }) => {
-    const auth = useAuthMethod();
+export const AuthorizedRoute: FC = ({ component: Component, visible, redirect, useAuthMethod = useJWTAuth, ...rest }: AuthorizedRouteProps) => {
+  const auth = useAuthMethod();
+  const history = useHistory();
 
     const canShow = (visible === Visibility.Everybody) 
             || (visible === Visibility.Authorized && auth.isAuthenticated()) 
             || (visible === Visibility.Unauthorized && !auth.isAuthenticated());
 
+    if (!canShow) {
+      history.push(redirect);
+    } 
+
     return (
-      <Route
-        {...rest}
-        render={({ location }) =>
-          canShow ? (
-            children
-          ) : (
-            <Redirect exact={true} to={{pathname: redirect, state: { from: location } }} />
-          )
-        }
-      />
+      <Route {...rest} render={(props) => (<Component {...props} />)}/>
     );
   }
   

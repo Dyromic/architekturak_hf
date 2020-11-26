@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 
+import history from './history'
+
 import Home from './sites/Home'
 import Login from './sites/Login'
 import Register from './sites/Register'
@@ -15,7 +17,7 @@ import routes from './routes'
 export default function App() {
 
   return (
-    <Router>
+    <Router history={history}>
         <Switch>
           <Redirect exact={true} path={routes.root} to={routes.home}/>
           <Route path={routes.home}><Home/></Route>

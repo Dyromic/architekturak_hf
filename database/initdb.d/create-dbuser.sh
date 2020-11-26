@@ -1,7 +1,6 @@
 #!/bin/bash
 # https://www.stuartellis.name/articles/shell-scripting/#enabling-better-error-handling-with-set
-set -Eeuo pipefail
- 
+# set -Eeuo pipefail
 # Based on mongo/docker-entrypoint.sh
 # https://github.com/docker-library/mongo/blob/master/docker-entrypoint.sh#L303
 if [ "$MONGO_DB_USERNAME" ] && [ "$MONGO_DB_PASSWORD" ]; then
