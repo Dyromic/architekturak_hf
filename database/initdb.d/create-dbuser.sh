@@ -7,6 +7,8 @@ set -Eeuo pipefail
 if [ "$MONGO_DB_USERNAME" ] && [ "$MONGO_DB_PASSWORD" ]; then
     "${mongo[@]}" -u "$MONGO_ROOT_USERNAME" -p "$MONGO_ROOT_PASSWORD" --authenticationDatabase "$rootAuthDatabase" "$MONGO_DATABASE" <<-EOJS
         db.createCollection("files", {});
+        db.createCollection("fs.chunks", {});
+        db.createCollection("fs.files", {});
         db.createCollection("configs", {});
         db.createCollection("status", {});
         db.createCollection("users", {});
@@ -16,6 +18,14 @@ if [ "$MONGO_DB_USERNAME" ] && [ "$MONGO_DB_PASSWORD" ]; then
                 privileges: [
                     {
                         resource: { db: $(_js_escape "$MONGO_DATABASE"), collection: "files" },
+                        actions: [ "find", "insert", "remove", "update" ]
+                    },
+                    {
+                        resource: { db: $(_js_escape "$MONGO_DATABASE"), collection: "fs.chunks" },
+                        actions: [ "find", "insert", "remove", "update" ]
+                    },
+                    {
+                        resource: { db: $(_js_escape "$MONGO_DATABASE"), collection: "fs.files" },
                         actions: [ "find", "insert", "remove", "update" ]
                     },
                     {
