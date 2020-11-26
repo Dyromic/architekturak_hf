@@ -15,5 +15,5 @@ services:
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
             MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
         ports:
-            - "27017:27017"
+            - "27018:27017"
         command: ["-f", "/etc/mongod.conf"]
