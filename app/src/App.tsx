@@ -10,7 +10,7 @@ import NotFound from './sites/NotFound'
 import Dashboard from './sites/Dashboard'
 import Paperbase from './components/Paperbase'
 
-import { AuthorizedRoute, Visibility } from './components/auth/AuthorizedRoute';
+import { JWTAuthorizedRoute, Visibility } from './components/auth/AuthorizedRoute';
 
 import routes from './routes'
 
@@ -21,9 +21,9 @@ export default function App() {
         <Switch>
           <Redirect exact={true} path={routes.root} to={routes.home}/>
           <Route path={routes.home} component={Home}/>
-          <AuthorizedRoute visible={Visibility.Unauthorized} redirect={routes.dashboard} path={routes.login} component={Login}/>
-          <AuthorizedRoute visible={Visibility.Unauthorized} redirect={routes.dashboard} path={routes.register} component={Register}/>
-          <AuthorizedRoute visible={Visibility.Authorized} redirect={routes.login} path={routes.dashboard} component={Dashboard}/>
+          <JWTAuthorizedRoute visible={Visibility.Unauthorized} redirect={routes.dashboard} path={routes.login} component={Login}/>
+          <JWTAuthorizedRoute visible={Visibility.Unauthorized} redirect={routes.dashboard} path={routes.register} component={Register}/>
+          <JWTAuthorizedRoute visible={Visibility.Authorized} redirect={routes.login} path={routes.dashboard} component={Dashboard}/>
           <Route path={routes.other} component={NotFound}/>
         </Switch>
     </Router>

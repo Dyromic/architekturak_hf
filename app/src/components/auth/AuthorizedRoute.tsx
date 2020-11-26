@@ -22,7 +22,7 @@ interface AuthorizedRouteProps {
 };
 
 
-export const AuthorizedRoute: FC<AuthorizedRouteProps> = ({ component: Component, visible, redirect, useAuthMethod = useJWTAuth, ...rest }: AuthorizedRouteProps) => {
+export const AuthorizedRoute: FC<AuthorizedRouteProps> = ({ component: Component, visible, redirect, useAuthMethod, ...rest }: AuthorizedRouteProps) => {
   const auth = useAuthMethod();
   const history = useHistory();
 
@@ -37,5 +37,21 @@ export const AuthorizedRoute: FC<AuthorizedRouteProps> = ({ component: Component
     return (
       <Route {...rest} render={(props) => (<Component {...props} />)}/>
     );
-  }
-  
+}
+
+interface JWTAuthorizedRouteProps {
+  exact?: boolean,
+  path: string,
+  component: React.ComponentType<any>,
+  visible: Visibility,
+  redirect: string,
+};
+
+
+export const JWTAuthorizedRoute: FC<JWTAuthorizedRouteProps> = (props: JWTAuthorizedRouteProps) => {
+
+    return (
+      <AuthorizedRoute {...props} useAuthMethod={useJWTAuth}/>
+    );
+    
+}
