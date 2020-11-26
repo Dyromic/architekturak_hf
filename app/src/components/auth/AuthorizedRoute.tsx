@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Route, Redirect, useHistory } from "react-router-dom";
+import { Route, useHistory } from "react-router-dom";
 
 import { useJWTAuth } from '../../features/auth/JWTAuth'
 
@@ -22,7 +22,7 @@ interface AuthorizedRouteProps {
 };
 
 
-export const AuthorizedRoute: FC = ({ component: Component, visible, redirect, useAuthMethod = useJWTAuth, ...rest }: AuthorizedRouteProps) => {
+export const AuthorizedRoute: FC<AuthorizedRouteProps> = ({ component: Component, visible, redirect, useAuthMethod = useJWTAuth, ...rest }: AuthorizedRouteProps) => {
   const auth = useAuthMethod();
   const history = useHistory();
 

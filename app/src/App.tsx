@@ -20,11 +20,11 @@ export default function App() {
     <Router history={history}>
         <Switch>
           <Redirect exact={true} path={routes.root} to={routes.home}/>
-          <Route path={routes.home}><Home/></Route>
-          <AuthorizedRoute visible={Visibility.Unauthorized} redirect={routes.dashboard} path={routes.login}><Login/></AuthorizedRoute>
-          <AuthorizedRoute visible={Visibility.Unauthorized} redirect={routes.dashboard} path={routes.register}><Register/></AuthorizedRoute>
-          <AuthorizedRoute visible={Visibility.Authorized} redirect={routes.login} path={routes.dashboard}><Dashboard/></AuthorizedRoute>
-          <Route path={routes.other}><NotFound/></Route>
+          <Route path={routes.home} component={Home}/>
+          <AuthorizedRoute visible={Visibility.Unauthorized} redirect={routes.dashboard} path={routes.login} component={Login}/>
+          <AuthorizedRoute visible={Visibility.Unauthorized} redirect={routes.dashboard} path={routes.register} component={Register}/>
+          <AuthorizedRoute visible={Visibility.Authorized} redirect={routes.login} path={routes.dashboard} component={Dashboard}/>
+          <Route path={routes.other} component={NotFound}/>
         </Switch>
     </Router>
   );
