@@ -9,8 +9,8 @@ namespace ConversionConfiguration.Models
     {
         public int AfterSlide { get; set; }
         public int MaxImages { get; set; }
-        public int PptFileId { get; set; }
-        public int SvgFileId { get; set; }
+        public string PptFileId { get; set; }
+        public string SvgFileId { get; set; }
         public string Animation { get; set; }
     }
 }
