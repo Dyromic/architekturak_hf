@@ -1,26 +1,29 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 
-function App() {
+import Home from './sites/Home'
+import Login from './sites/Login'
+import Register from './sites/Register'
+import NotFound from './sites/NotFound'
+import Dashboard from './sites/Dashboard'
+import Paperbase from './components/Paperbase'
+
+import { AuthorizedRoute, Visibility } from './components/auth/AuthorizedRoute';
+
+import routes from './routes'
+
+export default function App() {
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+        <Switch>
+          <Redirect exact={true} path={routes.root} to={routes.home}/>
+          <Route path={routes.home}><Home/></Route>
+          <AuthorizedRoute visible={Visibility.Unauthorized} redirect={routes.dashboard} path={routes.login}><Login/></AuthorizedRoute>
+          <AuthorizedRoute visible={Visibility.Unauthorized} redirect={routes.dashboard} path={routes.register}><Register/></AuthorizedRoute>
+          <AuthorizedRoute visible={Visibility.Authorized} redirect={routes.login} path={routes.dashboard}><Dashboard/></AuthorizedRoute>
+          <Route path={routes.other}><NotFound/></Route>
+        </Switch>
+    </Router>
   );
 }
-
-export default App;
