@@ -1,0 +1,16 @@
+﻿services:
+    configuration:    
+        container_name: configuration
+        hostname: configuration
+        build: .
+        ports:
+            - "27001:80"
+        networks:
+            - database_svg2ppt
+        env_file: 
+            - ../../../.env
+        environment: 
+            DatabaseSettings:ConnectionString: mongodb://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}@${MONGO_NAME}:27017/?authSource=${MONGO_DATABASE}
+networks:
+  database_svg2ppt:
+    external: true

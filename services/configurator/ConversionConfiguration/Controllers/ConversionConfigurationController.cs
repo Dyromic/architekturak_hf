@@ -1,5 +1,4 @@
-﻿using api;
-using ConversionConfiguration.Models;
+﻿using ConversionConfiguration.Models;
 using ConversionConfiguration.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +14,6 @@ namespace ConversionConfiguration.Controllers
     [ApiController]
     public class ConversionConfigurationController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<ConversionConfigurationController> _logger;
         private readonly FileService _fileService;
         private readonly ConfigService _configService;

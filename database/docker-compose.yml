@@ -1,15 +1,15 @@
 services:
     mongodb:
         image: mongo:latest
-        container_name: mongodb
-        hostname: mongodb
+        container_name: ${MONGO_NAME}
+        hostname: ${MONGO_NAME}
         volumes:
             - ./mongod.conf:/etc/mongod.conf
             - ./initdb.d/:/docker-entrypoint-initdb.d/
             - ./data/db/:/data/db/
             - ./data/log/:/var/log/mongodb/
         env_file: 
-            - ./.env
+            - ../.env
         environment:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
@@ -17,3 +17,8 @@ services:
         ports:
             - "27018:27017"
         command: ["-f", "/etc/mongod.conf"]
+        networks:
+            - svg2ppt
+networks:
+    svg2ppt:
+        driver: bridge
