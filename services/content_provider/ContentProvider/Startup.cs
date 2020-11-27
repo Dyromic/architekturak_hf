@@ -20,6 +20,8 @@ namespace ContentProvider
 
             var webContent = Configuration["WebContent"];
 
+            services.AddControllers().AddNewtonsoftJson();
+
             services.AddSpaStaticFiles(configuration =>
             {
                 configuration.RootPath = webContent;
@@ -35,6 +37,8 @@ namespace ContentProvider
                 );
             });
 
+            services.AddScoped<IRoutesService, RoutesService>
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -47,8 +51,13 @@ namespace ContentProvider
             app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
+            
             app.UseRouting();
 
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
         }
     }
