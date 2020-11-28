@@ -13,8 +13,11 @@ import Paperbase from './components/Paperbase'
 import { JWTAuthorizedRoute, Visibility } from './components/auth/AuthorizedRoute';
 
 import routes from './routes'
+import { useMicroService } from './features/microservice/useMicroServiceRouter';
 
 export default function App() {
+
+  const microservice = useMicroService();
 
   return (
     <Router history={history}>
