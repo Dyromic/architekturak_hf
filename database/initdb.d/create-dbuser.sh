@@ -21,11 +21,11 @@ if [ "$MONGO_DB_USERNAME" ] && [ "$MONGO_DB_PASSWORD" ]; then
                     },
                     {
                         resource: { db: $(_js_escape "$MONGO_DATABASE"), collection: "fs.chunks" },
-                        actions: [ "find", "insert", "remove", "update" ]
+                        actions: [ "find", "insert", "remove", "update", "listIndexes", "createIndex"]
                     },
                     {
                         resource: { db: $(_js_escape "$MONGO_DATABASE"), collection: "fs.files" },
-                        actions: [ "find", "insert", "remove", "update" ]
+                        actions: [ "find", "insert", "remove", "update", "listIndexes", "createIndex"]
                     },
                     {
                         resource: { db: $(_js_escape "$MONGO_DATABASE"), collection: "configs" },

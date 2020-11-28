@@ -200,9 +200,16 @@ paths:
     post:
       tags:
       - svg-parser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SingleId'
       responses:
         "200":
           description: SVG feldolgozás indítása sikeres
+        "422":
+          description: Nem található entitás a megadott azonosítóval
   /startPpt:
     post:
       tags:
