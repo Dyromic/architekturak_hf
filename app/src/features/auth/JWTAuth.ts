@@ -12,15 +12,16 @@ import { useMicroService as useMicroServiceRouter } from '../microservice/useMic
 export const useJWTAuth = () => {
 
     const microServiceRouter = useMicroServiceRouter();
-    const authEndpoint = microServiceRouter.getServiceEndpoint('auth');
-
     const dispatch = useAppDispatch();
     const { user, authenticated } = useSelector( (state: RootState) => state.auth )
 
     const Login = (email: string, password: string) => {
         
-      microServiceRouter.IterateServiceEndpoints('auth',
-        endpoint => dispatch(LoginOnEndpoint(endpoint, email, password))
+      microServiceRouter.IterateMicroServiceEndpoints('auth',
+        async (endpoint) => {
+          const status = await dispatch(LoginOnEndpoint(endpoint, email, password));
+          return  status === 401 && status === 200;
+        }
       );
       
     };
@@ -32,8 +33,11 @@ export const useJWTAuth = () => {
 
     const Register = (email: string, password: string, firstName: string, lastName: string) => {
   
-      microServiceRouter.IterateServiceEndpoints('auth',
-        endpoint => dispatch(RegisterOnEndpoint(endpoint, email, password, firstName, lastName))
+      microServiceRouter.IterateMicroServiceEndpoints('auth',
+        async (endpoint) => {
+          const status = await dispatch(RegisterOnEndpoint(endpoint, email, password, firstName, lastName));
+          return  status === 401 && status === 200;
+        }
       );
 
     };

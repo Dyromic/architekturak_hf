@@ -46,7 +46,7 @@ export const LoginOnEndpoint = (authEndpoint: string, email: string, password: s
       password: password
     });
 
-    if (response === undefined || response.status !== 200) return;
+    if (response === undefined || response.status !== 200) return response.status;
 
     window.localStorage.setItem("JWTToken", response.data);
     const jwtuserclaims = jwt_decode<JWTUserClaims>(response.data);
@@ -59,6 +59,7 @@ export const LoginOnEndpoint = (authEndpoint: string, email: string, password: s
     };
 
     dispatch(setAuthentication(user));
+    return response.status;
 
   };
   
@@ -75,7 +76,7 @@ export const RegisterOnEndpoint = (authEndpoint: string, email: string, password
       password: password
     });
     
-    if (response === undefined || response.status !== 200) return;
+    if (response === undefined || response.status !== 200) return response.status;
 
     const jwtuserclaims = jwt_decode<JWTUserClaims>(response.data);
     axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
@@ -86,7 +87,8 @@ export const RegisterOnEndpoint = (authEndpoint: string, email: string, password
       lastName: jwtuserclaims.given_name
     };
 
-    dispatch(setAuthentication(user));
+    dispatch(setAuthentication(user)); 
+    return response.status;
     
   };
   

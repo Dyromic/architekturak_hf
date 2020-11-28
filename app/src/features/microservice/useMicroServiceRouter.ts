@@ -53,10 +53,15 @@ export const useMicroService = () => {
         return microServices[name][1];
         
     };
-    const IterateServiceEndpoints = (name: MicroServiceName, cb :(endpoint:string) => any) => {
+    const IterateServiceEndpoints = (name: MicroServiceName, cb: (endpoint:string) => Promise<boolean>) => {
 
         if (microServices === undefined) return;
-        microServices[name].forEach((endpoint) => cb(endpoint));
+        (async () => {
+            for (let endpoint of microServices[name]) {
+                const val = await cb(endpoint);
+                if (val) break;
+            }
+        })();
         
     };
 
@@ -70,7 +75,7 @@ export const useMicroService = () => {
         requestServiceEndpoints,
         getServiceEndpoints,
         getServiceEndpoint,
-        IterateServiceEndpoints
+        IterateMicroServiceEndpoints: IterateServiceEndpoints
     };
 
 };
