@@ -1,5 +1,3 @@
-using ConversionConfiguration.Models;
-using ConversionConfiguration.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,12 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Status.Models;
+using Status.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ConversionConfiguration
+namespace Status
 {
     public class Startup
     {
@@ -30,15 +30,10 @@ namespace ConversionConfiguration
         {
             services.Configure<DatabaseSettings>(
                 Configuration.GetSection(nameof(DatabaseSettings)));
-            services.AddSingleton<IDatabaseSettings>(sp =>
+            services.AddSingleton<DatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
-            services.Configure<PropertySettings>(
-                Configuration.GetSection(nameof(PropertySettings)));
-            services.AddSingleton(sp =>
-                sp.GetRequiredService<IOptions<PropertySettings>>().Value);
 
-            services.AddSingleton<FileService>();
-            services.AddSingleton<ConfigService>();
+            services.AddSingleton<StatusService>();
 
             services.AddControllers();
         }

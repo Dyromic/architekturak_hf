@@ -196,8 +196,16 @@ paths:
             application/vnd.openxmlformats-officedocument.presentationml.presentation:
               schema:
                 $ref: '#/components/schemas/BinaryFile'
-  /startSvg:
+  /startSvg/{id}:
     post:
+      summary: SVG feldolgozás elindítása
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Konfiguráció azonosítója
       tags:
       - svg-parser
       requestBody:
@@ -210,8 +218,22 @@ paths:
           description: SVG feldolgozás indítása sikeres
         "422":
           description: Nem található entitás a megadott azonosítóval
-  /startPpt:
+  /startPpt/{id}:
     post:
+      summary: PPT generálás elindítása
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Konfiguráció azonosítója
+      requestBody:
+        description: Beinzertálandó képek azonosítója
+        required: true
+        name: "ids"
+        schema:
+          type: string[]
       tags:
       - ppt-exporter
       responses:

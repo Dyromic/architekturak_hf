@@ -1,5 +1,3 @@
-using ConversionConfiguration.Models;
-using ConversionConfiguration.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,12 +7,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PptExporter.Models;
+using PptExporter.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ConversionConfiguration
+namespace PptExporter
 {
     public class Startup
     {
@@ -30,7 +30,7 @@ namespace ConversionConfiguration
         {
             services.Configure<DatabaseSettings>(
                 Configuration.GetSection(nameof(DatabaseSettings)));
-            services.AddSingleton<IDatabaseSettings>(sp =>
+            services.AddSingleton(sp =>
                 sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
             services.Configure<PropertySettings>(
                 Configuration.GetSection(nameof(PropertySettings)));
