@@ -1,0 +1,17 @@
+﻿services:
+    configuration:    
+        container_name: ${CONTENT_NAME}
+        hostname: ${CONTENT_NAME}
+        build: .
+        ports:
+            - "27006:80"
+        networks:
+            - database_svg2ppt
+        env_file: 
+            - ../../../.env
+        environment: 
+            MicroServices:ConfigServiceName: Configuration
+            MicroServices:ConfigServiceRoutes: http://localhost:27001 #https://stackoverflow.com/questions/50919605/docker-compose-variable-substitution-interpolation-with-list-map-or-array-va
+networks:
+  database_svg2ppt:
+    external: true

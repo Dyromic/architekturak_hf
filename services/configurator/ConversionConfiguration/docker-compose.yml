@@ -1,7 +1,7 @@
 ﻿services:
     configuration:    
-        container_name: configuration
-        hostname: configuration
+        container_name: ${CONFIG_NAME}
+        hostname: ${CONFIG_NAME}
         build: .
         ports:
             - "27001:80"
