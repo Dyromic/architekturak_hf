@@ -1,5 +1,6 @@
 ﻿using ConversionConfiguration.Models;
 using ConversionConfiguration.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 namespace ConversionConfiguration.Controllers
 {
     [ApiController]
+    [EnableCors("CorsPolicy")]
     public class ConversionConfigurationController : ControllerBase
     {
         private readonly ILogger<ConversionConfigurationController> _logger;
@@ -55,7 +57,7 @@ namespace ConversionConfiguration.Controllers
         }
 
         [HttpPut("configuration")]
-        public async Task<ActionResult<string>> PutConfiguration(ConfigDto config)
+        public async Task<ActionResult<string>> PutConfiguration([FromBody] ConfigDto config)
         {
             return await _configService.Put(config);
         }
@@ -68,11 +70,9 @@ namespace ConversionConfiguration.Controllers
                 var content = new StringContent(JsonConvert.SerializeObject(
                     new Dictionary<string, string>{ { _propertySettings.StatusProp, "Queued" } }),
                     Encoding.UTF8, "application/json");
-                _logger.LogInformation(await content.ReadAsStringAsync());
                 var result = await new HttpClient().PostAsync(
                     string.Format(_propertySettings.StatusEndpoint, id), content);
-                _logger.LogInformation("Response: {}", result);
-                _logger.LogInformation("Content: {}", await result.Content.ReadAsStringAsync());
+                _logger.LogDebug("Response: {}", result);
             }
             catch (Exception e) {
                 _logger.LogWarning("Status not sent: {}", e.Message);
@@ -80,9 +80,10 @@ namespace ConversionConfiguration.Controllers
 
             try
             {
-                var result = await new HttpClient().PostAsync(string.Format(_propertySettings.StatusEndpoint, id),
-                    new FormUrlEncodedContent(new Dictionary<string, string>()));
+                var result = await new HttpClient().PostAsync(
+                    string.Format(_propertySettings.SvgEndpoint, id), null);
                 _logger.LogInformation("Response: {}", result);
+                _logger.LogInformation("Content: {}", await result.Content.ReadAsStringAsync());
             }
             catch (Exception e)
             {

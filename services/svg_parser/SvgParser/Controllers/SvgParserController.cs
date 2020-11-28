@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Svg;
 using SvgParser.Models;
 using SvgParser.Services;
@@ -10,11 +12,13 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SvgParser.Controllers
 {
     [ApiController]
+    [EnableCors("CorsPolicy")]
     public class SvgParserController : ControllerBase
     {
         private readonly ILogger<SvgParserController> _logger;
@@ -37,6 +41,7 @@ namespace SvgParser.Controllers
         [HttpPost("startSvg/{id}")]
         public async Task<IActionResult> PostStart(string id)
         {
+            _logger.LogInformation("id = {}", id);
             await SendStatus(id, _propertySettings.StatusBeginMessage);
 
             List<string> imageIds = new List<string>();
@@ -58,13 +63,23 @@ namespace SvgParser.Controllers
                 imageIds.Add(imgId);
             }
 
-            // Call endpoint
-            HttpClient client = new HttpClient();
-            var body = new Dictionary<string, string>();
-            body.Add(_propertySettings.FinishedIdsName, imageIds.ToString());
-            await client.PostAsync(_propertySettings.FinishedEndpoint + "/" + id, new FormUrlEncodedContent(body));
-
             await SendStatus(id, _propertySettings.StatusEndMessage);
+
+            // Call endpoint
+            var body = new Dictionary<string, List<string>>() {
+                { _propertySettings.FinishedIdsName, imageIds }
+            };
+            try
+            {
+                var result = await new HttpClient().PostAsync(
+                    string.Format(_propertySettings.FinishedEndpoint, id),
+                    new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json"));
+                _logger.LogInformation("Response: {}", result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Finish message not sent: {}", e.Message);
+            }
             return Ok();
         }
 
@@ -72,12 +87,17 @@ namespace SvgParser.Controllers
         {
             try
             {
-                var formVariables = new Dictionary<string, string>();
-                formVariables.Add(_propertySettings.StatusProp, message);
-                await new HttpClient().PostAsync(string.Format(_propertySettings.StatusEndpoint, id),
-                    new FormUrlEncodedContent(formVariables));
+                var content = new Dictionary<string, string>() { 
+                    { _propertySettings.StatusProp, message }
+                };
+                var result = await new HttpClient().PostAsync(string.Format(_propertySettings.StatusEndpoint, id),
+                    new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json"));
+                _logger.LogDebug("Response: {}", result);
             }
-            catch (Exception) { }
+            catch (Exception e)
+            {
+                _logger.LogWarning("Status not sent: {}", e.Message);
+            }
         }
     }
 }
