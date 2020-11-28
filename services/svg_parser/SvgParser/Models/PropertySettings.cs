@@ -9,5 +9,7 @@ namespace SvgParser.Models
     {
         public string SvgFileIdPropName { get; set; }
         public string PagesAttributeName { get; set; }
+        public string FinishedEndpoint { get; set; }
+        public string FinishedIdsName { get; set; }
     }
 }

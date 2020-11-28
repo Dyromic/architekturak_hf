@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SvgParser.Controllers
@@ -20,19 +21,21 @@ namespace SvgParser.Controllers
         private readonly FileService _fileService;
         private readonly ConfigService _configService;
         private readonly ImageGeneratorService _generatorService;
+        private readonly PropertySettings _propertySettings;
 
         public SvgParserController(ILogger<SvgParserController> logger, 
             FileService fileService, ConfigService configService, 
-            ImageGeneratorService generatorService)
+            ImageGeneratorService generatorService, PropertySettings propertySettings)
         {
             _logger = logger;
             _fileService = fileService;
             _configService = configService;
             _generatorService = generatorService;
+            _propertySettings = propertySettings;
         }
 
         [HttpPost("startSvg")]
-        public async Task<IActionResult> PostStart([FromForm]string id)
+        public async Task<IActionResult> PostStart([FromForm] string id)
         {
             List<string> imageIds = new List<string>();
             string fileId = await _configService.GetFileId(id);
@@ -52,6 +55,13 @@ namespace SvgParser.Controllers
                 string imgId = await _fileService.Upload(i.ToString() + ".png", stream.ToArray());
                 imageIds.Add(imgId);
             }
+
+            // Call endpoint
+            HttpClient client = new HttpClient();
+            var body = new Dictionary<string, string>();
+            body.Add(_propertySettings.FinishedIdsName, imageIds.ToString());
+            await client.PostAsync(_propertySettings.FinishedEndpoint + "/" + id, new FormUrlEncodedContent(body));
+
             return Ok();
         }
     }
