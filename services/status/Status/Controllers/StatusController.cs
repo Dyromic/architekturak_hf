@@ -30,7 +30,7 @@ namespace Status.Controllers
         }
 
         [HttpPost("/status/{id}")]
-        public async Task<IActionResult> Post(string id, StatusDto status)
+        public async Task<IActionResult> Post(string id, [FromBody] StatusDto status)
         {
             _logger.LogInformation("Content: {}", Request.Form);
             await _statusService.Put(id, status.status);

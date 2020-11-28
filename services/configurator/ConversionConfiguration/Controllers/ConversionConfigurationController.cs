@@ -68,9 +68,11 @@ namespace ConversionConfiguration.Controllers
                 var content = new StringContent(JsonConvert.SerializeObject(
                     new Dictionary<string, string>{ { _propertySettings.StatusProp, "Queued" } }),
                     Encoding.UTF8, "application/json");
+                _logger.LogInformation(await content.ReadAsStringAsync());
                 var result = await new HttpClient().PostAsync(
                     string.Format(_propertySettings.StatusEndpoint, id), content);
                 _logger.LogInformation("Response: {}", result);
+                _logger.LogInformation("Content: {}", await result.Content.ReadAsStringAsync());
             }
             catch (Exception e) {
                 _logger.LogWarning("Status not sent: {}", e.Message);
