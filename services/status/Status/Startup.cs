@@ -29,15 +29,16 @@ namespace Status
             services.AddSingleton<StatusService>();
 
             services.AddControllers().AddNewtonsoftJson(); 
-            /*services.AddCors(options =>
+            services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyMethod()
+                    builder => builder
+                    .AllowAnyMethod()
                     .AllowAnyHeader()
                     //.WithOrigins("http://localhost:3000")
                     .AllowCredentials()
                 );
-            });*/
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,11 +49,11 @@ namespace Status
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseCors("CorsPolicy");
-
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
