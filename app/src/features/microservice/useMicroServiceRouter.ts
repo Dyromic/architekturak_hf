@@ -47,12 +47,7 @@ export const useMicroService = () => {
         return microServices[name];
         
     };
-    const getServiceEndpoint = (name: MicroServiceName): (string | null) => {
 
-        if (microServices === undefined) return null;
-        return microServices[name][1];
-        
-    };
     const IterateServiceEndpoints = (name: MicroServiceName, cb: (endpoint:string) => Promise<boolean>) => {
 
         if (microServices === undefined) return;
@@ -74,7 +69,6 @@ export const useMicroService = () => {
     return {
         requestServiceEndpoints,
         getServiceEndpoints,
-        getServiceEndpoint,
         IterateMicroServiceEndpoints: IterateServiceEndpoints
     };
 

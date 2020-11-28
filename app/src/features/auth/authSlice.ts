@@ -42,8 +42,8 @@ export const LoginOnEndpoint = (authEndpoint: string, email: string, password: s
   return async (dispatch: AppDispatch) => {
 
     const response = await axios.post(`${authEndpoint}/login`, {
-      email: email,
-      password: password
+      Email: email,
+      Password: password
     });
 
     if (response === undefined || response.status !== 200) return response.status;
@@ -70,15 +70,16 @@ export const RegisterOnEndpoint = (authEndpoint: string, email: string, password
   return async (dispatch: AppDispatch) => {
 
     const response = await axios.post(`${authEndpoint}/register`, {
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      password: password
+      Email: email,
+      FirstName: firstName,
+      LastName: lastName,
+      Password: password
     });
     
     if (response === undefined || response.status !== 200) return response.status;
 
     const jwtuserclaims = jwt_decode<JWTUserClaims>(response.data);
+    window.localStorage.setItem("JWTToken", response.data);
     axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
     const user: User = {
       userId: jwtuserclaims.nameid, 
@@ -86,7 +87,6 @@ export const RegisterOnEndpoint = (authEndpoint: string, email: string, password
       firstName: jwtuserclaims.family_name, 
       lastName: jwtuserclaims.given_name
     };
-
     dispatch(setAuthentication(user)); 
     return response.status;
     

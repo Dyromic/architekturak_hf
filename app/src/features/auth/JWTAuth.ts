@@ -3,9 +3,8 @@ import { useSelector } from 'react-redux'
 
 import axios from 'axios'
 
-import { useAppDispatch, RootState, AppDispatch } from '../../reducers/store'
+import { useAppDispatch, RootState } from '../../reducers/store'
 import { LoginOnEndpoint, RegisterOnEndpoint, setAuthentication, removeAuthentication } from './authSlice'
-import { User } from './User'
 
 import { useMicroService as useMicroServiceRouter } from '../microservice/useMicroServiceRouter'
 
