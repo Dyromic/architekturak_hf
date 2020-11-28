@@ -1,11 +1,17 @@
-export enum UserRole {
+/*export enum UserRole {
     User, Admin
-};
+};*/
 
 export interface User {
-    userId: number,
-    firstName: string,
-    lastName: string,
+    userId: string,
     email: string,
-    role: UserRole
+    firstName: string,
+    lastName: string
+    //role: UserRole
+};
+export interface JWTUserClaims {
+    nameid: string,
+    email: string,
+    family_name: string,
+    given_name: string
 };
