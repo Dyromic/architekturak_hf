@@ -11,5 +11,9 @@ namespace PptExporter.Models
         public string EndFileName { get; set; }
         public string AfterSlideProp { get; set; }
         public string AnimationProp { get; set; }
+        public string StatusEndpoint { get; set; }
+        public string StatusProp { get; set; }
+        public string StatusBeginMessage { get; set; }
+        public string StatusEndMessage { get; set; }
     }
 }

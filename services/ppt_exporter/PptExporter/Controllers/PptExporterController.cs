@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace PptExporter.Controllers
@@ -28,8 +29,10 @@ namespace PptExporter.Controllers
         }
 
         [HttpPost("startPpt/{id}")]
-        public async Task<IActionResult> PostStart(string id, [FromBody] string[] ids)
+        public async Task<IActionResult> PostStart(string id, [FromForm] string[] ids)
         {
+            await SendStatus(id, _propertySettings.StatusBeginMessage);
+
             ConfigDto config = await _configService.GetConfig(id);
             IPresentation presentation = null;
             if (config.PptId != null)
@@ -65,7 +68,20 @@ namespace PptExporter.Controllers
             string endFileId = await _fileService.Upload(endFilename, endFileStream.ToArray());
             await _fileService.SaveEndId(endFileId, endFilename);
 
+            await SendStatus(id, _propertySettings.StatusEndMessage);
             return Ok();
+        }
+
+        private async Task SendStatus(string id, string message)
+        {
+            try
+            {
+                var formVariables = new Dictionary<string, string>();
+                formVariables.Add(_propertySettings.StatusProp, message);
+                await new HttpClient().PostAsync(string.Format(_propertySettings.StatusEndpoint, id), 
+                    new FormUrlEncodedContent(formVariables));
+            }
+            catch (Exception) { }
         }
     }
 }

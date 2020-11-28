@@ -11,5 +11,9 @@ namespace SvgParser.Models
         public string PagesAttributeName { get; set; }
         public string FinishedEndpoint { get; set; }
         public string FinishedIdsName { get; set; }
+        public string StatusEndpoint { get; set; }
+        public string StatusProp { get; set; }
+        public string StatusBeginMessage { get; set; }
+        public string StatusEndMessage { get; set; }
     }
 }

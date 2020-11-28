@@ -32,6 +32,10 @@ namespace ConversionConfiguration
                 Configuration.GetSection(nameof(DatabaseSettings)));
             services.AddSingleton<IDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<DatabaseSettings>>().Value);
+            services.Configure<PropertySettings>(
+                Configuration.GetSection(nameof(PropertySettings)));
+            services.AddSingleton(sp =>
+                sp.GetRequiredService<IOptions<PropertySettings>>().Value);
 
             services.AddSingleton<FileService>();
             services.AddSingleton<ConfigService>();

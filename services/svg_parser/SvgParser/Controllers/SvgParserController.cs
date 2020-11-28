@@ -34,9 +34,11 @@ namespace SvgParser.Controllers
             _propertySettings = propertySettings;
         }
 
-        [HttpPost("startSvg")]
-        public async Task<IActionResult> PostStart([FromForm] string id)
+        [HttpPost("startSvg/{id}")]
+        public async Task<IActionResult> PostStart(string id)
         {
+            await SendStatus(id, _propertySettings.StatusBeginMessage);
+
             List<string> imageIds = new List<string>();
             string fileId = await _configService.GetFileId(id);
             if (fileId == null) return UnprocessableEntity();
@@ -62,7 +64,20 @@ namespace SvgParser.Controllers
             body.Add(_propertySettings.FinishedIdsName, imageIds.ToString());
             await client.PostAsync(_propertySettings.FinishedEndpoint + "/" + id, new FormUrlEncodedContent(body));
 
+            await SendStatus(id, _propertySettings.StatusEndMessage);
             return Ok();
+        }
+
+        private async Task SendStatus(string id, string message)
+        {
+            try
+            {
+                var formVariables = new Dictionary<string, string>();
+                formVariables.Add(_propertySettings.StatusProp, message);
+                await new HttpClient().PostAsync(string.Format(_propertySettings.StatusEndpoint, id),
+                    new FormUrlEncodedContent(formVariables));
+            }
+            catch (Exception) { }
         }
     }
 }

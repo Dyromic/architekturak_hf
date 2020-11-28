@@ -33,16 +33,18 @@ namespace ConversionConfiguration.Services
             }).FirstOrDefaultAsync() ?? new ConfigDto();
         }
             
-        public async Task Put(ConfigDto config)
+        public async Task<string> Put(ConfigDto config)
         {
-            await _configs.InsertOneAsync(new ConfigEntity
+            ConfigEntity entity = new ConfigEntity
             {
                 AfterSlide = config.AfterSlide,
                 Animation = config.Animation,
                 MaxImages = config.MaxImages,
                 PptFileId = config.PptFileId,
                 SvgFileId = config.SvgFileId
-            });
+            };
+            await _configs.InsertOneAsync(entity);
+            return entity._id;
         }
     }
 }
