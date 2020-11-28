@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ConversionConfiguration.Controllers
@@ -63,19 +65,27 @@ namespace ConversionConfiguration.Controllers
         {
             try
             {
-                var formVariables = new Dictionary<string, string>();
-                formVariables.Add(_propertySettings.StatusProp, "Queued");
-                await new HttpClient().PostAsync(string.Format(_propertySettings.StatusEndpoint, id),
-                    new FormUrlEncodedContent(formVariables));
+                var content = new StringContent(JsonConvert.SerializeObject(
+                    new Dictionary<string, string>{ { _propertySettings.StatusProp, "Queued" } }),
+                    Encoding.UTF8, "application/json");
+                var result = await new HttpClient().PostAsync(
+                    string.Format(_propertySettings.StatusEndpoint, id), content);
+                _logger.LogInformation("Response: {}", result);
             }
-            catch (Exception) { }
+            catch (Exception e) {
+                _logger.LogWarning("Status not sent: {}", e.Message);
+            }
 
             try
             {
-                await new HttpClient().PostAsync(string.Format(_propertySettings.StatusEndpoint, id),
+                var result = await new HttpClient().PostAsync(string.Format(_propertySettings.StatusEndpoint, id),
                     new FormUrlEncodedContent(new Dictionary<string, string>()));
+                _logger.LogInformation("Response: {}", result);
             }
-            catch (Exception) { }
+            catch (Exception e)
+            {
+                _logger.LogError("Start not sent: " + e.Message);
+            }
             return Ok();
         }
     }

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Status.Models;
 using Status.Services;
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 namespace Status.Controllers
 {
     [ApiController]
+    //[EnableCors("CorsPolicy")]
     public class StatusController : ControllerBase
     {
         private readonly ILogger<StatusController> _logger;
@@ -27,9 +30,10 @@ namespace Status.Controllers
         }
 
         [HttpPost("/status/{id}")]
-        public async Task<IActionResult> Post(string id, [FromForm] string status)
+        public async Task<IActionResult> Post(string id, StatusDto status)
         {
-            await _statusService.Put(id, status);
+            _logger.LogInformation("Content: {}", Request.Form);
+            await _statusService.Put(id, status.status);
             return Ok();
         }
     }

@@ -1,0 +1,27 @@
+﻿services:
+    configuration:    
+        container_name: ${SVG_NAME}
+        hostname: ${SVG_NAME}
+        build: .
+        ports:
+            - "27003:80"
+        networks:
+            - database_svg2ppt
+        env_file: 
+            - ../../../.env
+        environment: 
+            DatabaseSettings:DatabaseName: ${MONGO_DATABASE}
+            DatabaseSettings:ConfigsCollectionName: ${COLLECTION_CONFIGS}
+            DatabaseSettings:ConnectionString: mongodb://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}@${MONGO_NAME}:27017/?authSource=${MONGO_DATABASE}
+            PropertySettings:SvgFileIdPropName: SvgFileId
+            PropertySettings:PagesAttributeName: Animation
+            PropertySettings:AnimationProp: data-pages
+            PropertySettings:FinishedEndpoint: ${PPT_NAME}/{0}
+            PropertySettings:FinishedIdsName: ids
+            PropertySettings:StatusEndpoint: ${STATUS_NAME}/{0}
+            PropertySettings:StatusProp: ${PROPERTY_STATUS}
+            PropertySettings:StatusBeginMessage: Processing SVG
+            PropertySettings:StatusEndMessage: Done SVG
+networks:
+  database_svg2ppt:
+    external: true

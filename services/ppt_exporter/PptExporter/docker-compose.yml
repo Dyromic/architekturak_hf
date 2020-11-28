@@ -1,22 +1,28 @@
 ﻿services:
     configuration:    
-        container_name: configuration
-        hostname: configuration
+        container_name: ${PPT_NAME}
+        hostname: ${PPT_NAME}
         build: .
         ports:
-            - "27001:80"
+            - "27002:80"
         networks:
             - database_svg2ppt
         env_file: 
             - ../../../.env
-        environment:
+        environment: 
             DatabaseSettings:DatabaseName: ${MONGO_DATABASE}
             DatabaseSettings:FilesCollectionName: ${COLLECTION_FILES}
             DatabaseSettings:ConfigsCollectionName: ${COLLECTION_CONFIGS}
             DatabaseSettings:ConnectionString: mongodb://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}@${MONGO_NAME}:27017/?authSource=${MONGO_DATABASE}
-            PropertySettings:StatusEndpoint: http://${STATUS_NAME}/status/{0}
+            PropertySettings:EndIdName: FileId
+            PropertySettings:EndFileName: Name
+            PropertySettings:AfterSlideProp: AfterSlide
+            PropertySettings:AnimationProp: Animation
+            PropertySettings:PptFileIdProp: PptFileId
+            PropertySettings:StatusEndpoint: ${STATUS_NAME}/{0}
             PropertySettings:StatusProp: ${PROPERTY_STATUS}
-            PropertySettings:SvgEndpoint: http://${SVG_NAME}/startSvg/{0}            
+            PropertySettings:StatusBeginMessage: Processing PPT
+            PropertySettings:StatusEndMessage: Done
 networks:
   database_svg2ppt:
     external: true
