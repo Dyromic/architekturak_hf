@@ -26,6 +26,7 @@ export const useJWTAuth = () => {
     };
 
     const Logout = () => {
+      window.localStorage.clear();
       delete axios.defaults.headers.common['Authorization'];
       dispatch(removeAuthentication(user));
     };
