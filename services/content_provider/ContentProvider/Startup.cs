@@ -1,3 +1,4 @@
+using ContentProvider.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,7 +38,7 @@ namespace ContentProvider
                 );
             });
 
-            services.AddScoped<IRoutesService, RoutesService>
+            services.AddScoped<IRoutesService, RoutesService>();
 
         }
 
@@ -48,11 +49,11 @@ namespace ContentProvider
             { 
   
             });
-            app.UseCors("CorsPolicy");
-
             app.UseHttpsRedirection();
             
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
             {
