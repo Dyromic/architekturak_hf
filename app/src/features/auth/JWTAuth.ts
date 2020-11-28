@@ -1,54 +1,41 @@
 //import { useEffect } from "react";
 import { useSelector } from 'react-redux'
-import jwt_decode from 'jwt-decode'
 
 import axios from 'axios'
 
-import { useAppDispatch, RootState } from '../../reducers/store'
-import { signin, signout } from './authSlice'
+import { useAppDispatch, RootState, AppDispatch } from '../../reducers/store'
+import { LoginOnEndpoint, RegisterOnEndpoint, setAuthentication, removeAuthentication } from './authSlice'
 import { User } from './User'
 
+import { useMicroService as useMicroServiceRouter } from '../microservice/useMicroServiceRouter'
+
 export const useJWTAuth = () => {
+
+    const microServiceRouter = useMicroServiceRouter();
+    const authEndpoint = microServiceRouter.getServiceEndpoint('auth');
 
     const dispatch = useAppDispatch();
     const { user, authenticated } = useSelector( (state: RootState) => state.auth )
 
-    const login = (email: string, password: string) => {
-
-      return axios.post('/login', {
-        email: email,
-        password: password
-      }).then((response) => {
-        if (response.status === 200) {
-          const user = jwt_decode<User>(response.data);
-          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
-          dispatch(signin(user));
-          return true;
-        }
-        return false;
-      })
-      .catch((error) => {
-        return false;
-      });
-
+    const Login = (email: string, password: string) => {
+        
+      microServiceRouter.IterateServiceEndpoints('auth',
+        endpoint => dispatch(LoginOnEndpoint(endpoint, email, password))
+      );
+      
     };
 
-    const logout = () => {
+    const Logout = () => {
       delete axios.defaults.headers.common['Authorization'];
-      dispatch(signout(user));
+      dispatch(removeAuthentication(user));
     };
 
-    const register = () => {
-      axios.post('/register', {
-        email: 'Fred',
-        password: 'Flintstone'
-      }).then(function (response) {
-        if (response.status === 200) {
-          const user = jwt_decode<User>(response.data);
-          axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
-          dispatch(signin(user));
-        }
-      })
+    const Register = (email: string, password: string, firstName: string, lastName: string) => {
+  
+      microServiceRouter.IterateServiceEndpoints('auth',
+        endpoint => dispatch(RegisterOnEndpoint(endpoint, email, password, firstName, lastName))
+      );
+
     };
 
     const isAuthenticated = () => {
@@ -58,9 +45,9 @@ export const useJWTAuth = () => {
     return {
         user,
         isAuthenticated,
-        login,
-        logout,
-        register
+        Login,
+        Logout,
+        Register
     };
 
 };
