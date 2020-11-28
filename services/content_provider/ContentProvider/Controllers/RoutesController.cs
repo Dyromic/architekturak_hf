@@ -1,5 +1,6 @@
 ﻿using ContentProvider.DTO;
 using ContentProvider.Services;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -10,8 +11,9 @@ using System.Threading.Tasks;
 
 namespace ContentProvider.Controllers
 {
-    [Route("api/routes")]
     [ApiController]
+    [Route("api/routes")]
+    [EnableCors("CorsPolicy")]
     public class RoutesController : ControllerBase
     {
 
