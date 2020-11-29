@@ -35,6 +35,7 @@ namespace ContentProvider
                     .AllowAnyHeader()
                     //.WithOrigins("http://localhost:3000")
                     .AllowCredentials()
+                    .SetIsOriginAllowed(_ => true)
                 );
             });
 
@@ -45,10 +46,6 @@ namespace ContentProvider
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
-            app.UseSpa(options => 
-            { 
-  
-            });
             app.UseHttpsRedirection();
             
             app.UseRouting();
@@ -58,6 +55,11 @@ namespace ContentProvider
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+
+            app.UseSpa(options => 
+            { 
+  
             });
 
         }

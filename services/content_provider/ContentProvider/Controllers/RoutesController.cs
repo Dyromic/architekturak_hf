@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace ContentProvider.Controllers
 {
     [ApiController]
-    [Route("api/routes")]
+    [Route("api")]
     [EnableCors("CorsPolicy")]
     public class RoutesController : ControllerBase
     {
@@ -25,7 +25,7 @@ namespace ContentProvider.Controllers
             this.routesService = routesService;
         }
 
-        [HttpGet]
+        [HttpGet("routes")]
         public IEnumerable<MicroService> Get()
         {
             return routesService.GetRandomServiceRoutes();
