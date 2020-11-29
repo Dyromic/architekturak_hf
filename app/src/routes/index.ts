@@ -5,6 +5,7 @@ const routes = {
     login: "/login",
     register: "/register",
     dashboard: "/dashboard",
+    outofservice: "/outofservice",
     other: "*"
 };
 

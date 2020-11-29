@@ -1,4 +1,4 @@
-/*import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -12,6 +12,14 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Toolbar from '@material-ui/core/Toolbar';
+import AppBar from '@material-ui/core/AppBar';
+
+import { useHistory } from "react-router-dom";
+
+import Navbar from '../components/Navbar';
+import { useJWTAuth } from '../features/auth/JWTAuth';
+import { useAppDispatch } from '../reducers/store';
 
 function Copyright() {
   return (
@@ -43,81 +51,151 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+  },appBar: {
+    borderBottom: `1px solid ${theme.palette.divider}`,
   },
+  toolbar: {
+    flexWrap: 'wrap',
+  },
+  toolbarTitle: {
+    flexGrow: 1,
+  },
+  link: {
+    margin: theme.spacing(1, 1.5),
+  }
 }));
+
+interface Credentials {
+  email: string,
+  password: string,
+  remember: boolean
+};
 
 export default function Login() {
   const classes = useStyles();
+  const history = useHistory();
+  const dispatch = useAppDispatch();
+  const auth = useJWTAuth();
+  const [credentials, setCredentials] = useState<Credentials>({
+    email: "Username",
+    password: "Password",
+    remember: false,
+  });
 
+  const onEmailChange = (event) => {
+
+    setCredentials((state: Credentials) => ({
+      ...state,
+      email: event.target.value
+    }));
+
+  };
+
+  const onPasswordChange = (event) => {
+
+    setCredentials((state: Credentials) => ({
+      ...state,
+      password: event.target.value
+    }));
+
+  };
+
+  const onRememberChange = (event) => {
+
+    setCredentials((state: Credentials) => ({
+      ...state,
+      remember: event.target.checked
+    }));
+
+  };
+
+  const tryLogin = () => {
+    dispatch(auth.Login(credentials.email, credentials.password, credentials.remember));
+  };
+
+  const redirectToRegister = () => {
+    history.push("/register");
+
+  
+};
   return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <form className={classes.form} noValidate>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
+    <React.Fragment>
+      <Navbar/>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign in
+          </Typography>
+          <form className={classes.form} noValidate>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              onChange={onEmailChange}
+              autoComplete="email"
+              value={credentials.email}
+              autoFocus
+            />
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              onChange={onPasswordChange}
+              value={credentials.password}
+              autoComplete="current-password"
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" checked={credentials.remember} onChange={onRememberChange} />}
+              label="Remember me"
+            />
+            <Button
+              type="button"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              onClick={tryLogin}
+            >
+              Sign In
+            </Button>
+            <Grid container>
+              <Grid item xs>
+                {/*<Link href="#" variant="body2">
+                  Forgot password?
+  </Link>*/}
+              </Grid>
+              <Grid item>
+                <Link href="#" variant="body2" 
+              onClick={redirectToRegister}>
+                  {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
-        </form>
-      </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
-    </Container>
+          </form>
+        </div>
+        <Box mt={8}>
+          <Copyright />
+        </Box>
+      </Container>
+    </React.Fragment>
   );
 }
-*/
 
-import React from 'react';
+
+/*import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -247,4 +325,4 @@ export default function Login() {
       </Grid>
     </Grid>
   );
-}
+}*/

@@ -1,1 +1,1 @@
-export const ContentProviderAPI = '/api/';
+export const ContentProviderAPI = '/api';

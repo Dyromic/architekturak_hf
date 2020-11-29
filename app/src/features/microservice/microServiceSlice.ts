@@ -8,11 +8,13 @@ export type MicroServiceEndpoints = {
 };
 export type MicroServiceEndpointDictionary = { [name: string]: Endpoints };
 export type MicroServiceState = { 
-    services?: MicroServiceEndpointDictionary 
+    services?: MicroServiceEndpointDictionary,
+    serviceAvailable: boolean
 };
 
 const initialMicroServiceState: MicroServiceState = {
-    services: undefined
+    services: undefined,
+    serviceAvailable: false
 };
 
 const microServiceSlice = createSlice({
@@ -46,6 +48,10 @@ const microServiceSlice = createSlice({
         if (state.services !== undefined && serviceEndpoint.name in state.services) {
             delete state.services[serviceEndpoint.name];
         }
+    },
+    setAvailable: (state, action: PayloadAction<boolean>) => {
+        const available = action.payload;
+        state.serviceAvailable = available;
     }
 
   }
@@ -54,7 +60,8 @@ const microServiceSlice = createSlice({
 export const { 
     addServiceEndpoints, 
     setServiceEndpoints, 
-    removeServiceEndpoints 
+    removeServiceEndpoints,
+    setAvailable
 } = microServiceSlice.actions;
 
 export default microServiceSlice.reducer;

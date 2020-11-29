@@ -1,4 +1,4 @@
-import { useEffect, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import axios from 'axios'
 
@@ -6,10 +6,8 @@ import { useAppDispatch, RootState } from '../../reducers/store'
 import {ContentProviderAPI} from '../../config/config'
 
 import {   
-    Endpoints,
+    setAvailable,
     addServiceEndpoints, 
-    setServiceEndpoints, 
-    removeServiceEndpoints,  
     MicroServiceEndpoints,
     MicroServiceName
 } from './microServiceSlice'
@@ -17,59 +15,71 @@ import {
 export const useMicroService = () => {
 
     const dispatch = useAppDispatch();
-    const { microServices } = useSelector( (state: RootState) => state.microservice );
+    //const history = useHistory();
+    const { microServices, serviceAvailable } = useSelector( (state: RootState) => state.microservice );
 
-    const requestServiceEndpoints = async () => {
+    const requestServiceEndpoints = () => async () => {
 
         if (microServices === undefined) {
 
-            const response = await axios.get(`${ContentProviderAPI}/routes`);
-            if (response === undefined || response.status !== 200) return false;     
+            try {
 
-            const serviceRoutes = response.data as MicroServiceEndpoints[];
-            serviceRoutes.forEach((item) => {
-                const newMicroService: MicroServiceEndpoints = {
-                    name: item.name,
-                    endpoints: item.endpoints
-                };
+                const response = await axios.get(`${ContentProviderAPI}/routes`);
 
-                dispatch(addServiceEndpoints(newMicroService));
+                const serviceRoutes = response.data as MicroServiceEndpoints[];
+                serviceRoutes.forEach((item) => {
+                    const newMicroService: MicroServiceEndpoints = {
+                        name: item.name,
+                        endpoints: item.endpoints
+                    };
+    
+                    dispatch(addServiceEndpoints(newMicroService));
+    
+                });            
+                dispatch(setAvailable(true));
 
-            });            
+            } catch (err) {
+                console.log(err);
+                dispatch(setAvailable(false));
+            }
 
         }
 
     };
 
-    const getServiceEndpoints = (name: MicroServiceName): (Endpoints | null) => {
+    const validStatus = (status: number): boolean => {
+        return status === 401 || status === 200;
+    }
 
-        if (microServices === undefined) return null;
-        return microServices[name];
-        
-    };
+    const post = async (name: MicroServiceName, route: string, data: any) => {
 
-    const IterateServiceEndpoints = (name: MicroServiceName, cb: (endpoint:string) => Promise<boolean>) => {
-
-        if (microServices === undefined) return;
-        (async () => {
-            for (let endpoint of microServices[name]) {
-                const val = await cb(endpoint);
-                if (val) break;
+        if (!serviceAvailable) return;
+        for (let endpoint of microServices[name]) {
+            const response = await axios.post(`${endpoint}/${route}`, data);
+            if (response !== undefined && validStatus(response.status)) {
+                return response;
             }
-        })();
-        
+        }
+
     };
 
-    useEffect(() => {
+    const get = async (name: MicroServiceName, route: string, options: any) => {
 
-        requestServiceEndpoints();
+        if (!serviceAvailable) return;
+        for (let endpoint of microServices[name]) {
+            const response = await axios.get(`${endpoint}/${route}`, options);
+            if (response !== undefined && validStatus(response.status)) {
+                return response;
+            }
+        }
 
-    }, []);
+    };
 
     return {
         requestServiceEndpoints,
-        getServiceEndpoints,
-        IterateMicroServiceEndpoints: IterateServiceEndpoints
+        serviceAvailable,
+        post,
+        get
     };
 
 };
