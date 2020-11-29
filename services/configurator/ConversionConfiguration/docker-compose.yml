@@ -4,9 +4,11 @@
         hostname: ${CONFIG_NAME}
         build: .
         ports:
-            - "27001:80"
+            - "27001:443"
         networks:
             - database_svg2ppt
+        volumes:
+            - ${ASPNETCORE_SSL_PATH}:/https:ro
         env_file: 
             - ../../../.env
         environment:

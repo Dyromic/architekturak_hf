@@ -8,6 +8,7 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -37,6 +38,23 @@ namespace ConversionConfiguration.Controllers
         public async Task<ActionResult<List<FileDto>>> GetFiles()
         {
             return await _fileService.Get();
+        }
+
+        [HttpGet("files/{id}")]
+        public async Task<IActionResult> GetFiles(string id)
+        {
+            Stream stream = null;
+            try
+            {
+                stream = await _fileService.GetStream(id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Could not open file: {}\n{}", new object[] { id, e });
+            }
+            if (stream == null)
+                return NotFound();
+            return File(stream, "application/octet-stream", await _fileService.GetName(id));
         }
 
         [HttpPost("files")]

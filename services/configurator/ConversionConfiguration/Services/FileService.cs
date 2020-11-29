@@ -30,7 +30,18 @@ namespace ConversionConfiguration.Services
                 .Project(e => new FileDto { Id = e.FileId, Name = e.Name } )
                 .ToListAsync();
         }
-            
+
+        public async Task<Stream> GetStream(string id)
+        {
+            return await _bucket.OpenDownloadStreamAsync(new ObjectId(id));
+        }
+
+        public async Task<string> GetName(string id)
+        {
+            return await _files.Find(file => file.FileId == id)
+                .Project(e => e.Name).SingleOrDefaultAsync();
+        }
+
         public async Task<ObjectId> Add(string name, Stream stream)
         {
             ObjectId id = await _bucket.UploadFromStreamAsync(name, stream);
