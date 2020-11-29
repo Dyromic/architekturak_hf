@@ -1,7 +1,8 @@
 import React, { FC } from "react";
 import { Route, useHistory } from "react-router-dom";
+import history from "./../../history";
 
-import { useJWTAuth } from '../../features/auth/JWTAuth'
+import { useJWTAuth } from './../../features/auth/JWTAuth'
 
 export enum Visibility {
   Everybody,
@@ -24,11 +25,11 @@ interface AuthorizedRouteProps {
 
 export const AuthorizedRoute: FC<AuthorizedRouteProps> = ({ component: Component, visible, redirect, useAuthMethod, ...rest }: AuthorizedRouteProps) => {
   const auth = useAuthMethod();
-  const history = useHistory();
+  //const history = useHistory();
 
     const canShow = (visible === Visibility.Everybody) 
-            || (visible === Visibility.Authorized && auth.isAuthenticated()) 
-            || (visible === Visibility.Unauthorized && !auth.isAuthenticated());
+            || (visible === Visibility.Authorized && auth.authenticated) 
+            || (visible === Visibility.Unauthorized && !auth.authenticated);
 
     if (!canShow) {
       history.push(redirect);

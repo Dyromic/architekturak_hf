@@ -8,12 +8,12 @@ export type MicroServiceEndpoints = {
 };
 export type MicroServiceEndpointDictionary = { [name: string]: Endpoints };
 export type MicroServiceState = { 
-    services?: MicroServiceEndpointDictionary,
+    services: MicroServiceEndpointDictionary,
     serviceAvailable: boolean
 };
 
 const initialMicroServiceState: MicroServiceState = {
-    services: undefined,
+    services: {},
     serviceAvailable: false
 };
 
@@ -23,29 +23,28 @@ const microServiceSlice = createSlice({
   reducers: {
     addServiceEndpoints: (state, action: PayloadAction<MicroServiceEndpoints>) => {
         const serviceEndpoint = action.payload;
-        if (state.services === undefined) {
-            const newServices: MicroServiceEndpointDictionary = {
-                [serviceEndpoint.name]: [...serviceEndpoint.endpoints]
-            };
-            state.services = newServices;
-        } else {
-            state.services[serviceEndpoint.name] = [...state[serviceEndpoint.name], ...serviceEndpoint.endpoints];
-        }
-    },
-    setServiceEndpoints: (state, action: PayloadAction<MicroServiceEndpoints>) => {
-        const serviceEndpoint = action.payload;
-        if (state.services === undefined) {
-            const newServices: MicroServiceEndpointDictionary = {
-                [serviceEndpoint.name]: [...serviceEndpoint.endpoints]
-            };
-            state.services = newServices;
+        if (state.services[serviceEndpoint.name] !== undefined ) {
+            const endpoints = state.services[serviceEndpoint.name];
+            console.log(endpoints)
+            state.services[serviceEndpoint.name] = [...endpoints, ...serviceEndpoint.endpoints];
         } else {
             state.services[serviceEndpoint.name] = [...serviceEndpoint.endpoints];
         }
     },
+    setServiceEndpoints: (state, action: PayloadAction<MicroServiceEndpoints>) => {
+        const serviceEndpoint = action.payload;
+       /* if (state.services === undefined) {
+            const newServices: MicroServiceEndpointDictionary = {
+                [serviceEndpoint.name]: [...serviceEndpoint.endpoints]
+            };
+            state.services = newServices;
+        } else {*/
+            state.services[serviceEndpoint.name] = [...serviceEndpoint.endpoints];
+        //}
+    },
     removeServiceEndpoints: (state, action: PayloadAction<MicroServiceEndpoints>) => {
         const serviceEndpoint = action.payload;
-        if (state.services !== undefined && serviceEndpoint.name in state.services) {
+        if (/*state.services !== undefined &&*/ serviceEndpoint.name in state.services) {
             delete state.services[serviceEndpoint.name];
         }
     },

@@ -17,9 +17,12 @@ import AppBar from '@material-ui/core/AppBar';
 
 import { useHistory } from "react-router-dom";
 
-import Navbar from '../components/Navbar';
-import { useJWTAuth } from '../features/auth/JWTAuth';
-import { useAppDispatch } from '../reducers/store';
+import Navbar from './../components/Navbar';
+import { useJWTAuth } from './../features/auth/JWTAuth';
+import { useAppDispatch } from './../reducers/store';
+
+//import history from "./../history";
+import routes from '../routes';
 
 function Copyright() {
   return (
@@ -77,8 +80,8 @@ export default function Login() {
   const dispatch = useAppDispatch();
   const auth = useJWTAuth();
   const [credentials, setCredentials] = useState<Credentials>({
-    email: "Username",
-    password: "Password",
+    email: "",
+    password: "",
     remember: false,
   });
 
@@ -114,7 +117,7 @@ export default function Login() {
   };
 
   const redirectToRegister = () => {
-    history.push("/register");
+    history.push(routes.register);
 
   
 };
@@ -178,7 +181,7 @@ export default function Login() {
   </Link>*/}
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2" 
+                <Link variant="body2" 
               onClick={redirectToRegister}>
                   {"Don't have an account? Sign Up"}
                 </Link>

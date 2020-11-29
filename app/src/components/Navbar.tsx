@@ -7,6 +7,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import AppBar from '@material-ui/core/AppBar';
 
 import { useHistory } from "react-router-dom";
+import routes from '../routes';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -45,11 +46,11 @@ export default function Navbar() {
     const history = useHistory();
 
     const redirectToLogin = () => {
-        history.push("/login");
+        history.push(routes.login);
     };
 
     const redirectToHome = () => {
-        history.push("/home");
+        history.push(routes.home);
     };
 
     return (
@@ -59,14 +60,14 @@ export default function Navbar() {
                 SVG to PPT
             </Typography>
             <nav>
-                <Link variant="button" color="textPrimary" href="#" className={classes.link}>
+                <Link variant="button" color="textPrimary" className={classes.link}>
                 Features
                 </Link>
                 <Link variant="button" color="textPrimary" className={classes.link} onClick={redirectToHome}>
                 Home
                 </Link>
             </nav>
-            <Button href="#" color="primary" variant="outlined" className={classes.link} onClick={redirectToLogin}>
+            <Button color="primary" variant="outlined" className={classes.link} onClick={redirectToLogin}>
                 Login
             </Button>
             </Toolbar>
