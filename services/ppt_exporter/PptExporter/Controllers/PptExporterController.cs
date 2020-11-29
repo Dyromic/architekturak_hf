@@ -1,6 +1,4 @@
-﻿using Aspose.Slides;
-using Aspose.Slides.Export;
-using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -23,55 +21,44 @@ namespace PptExporter.Controllers
     {
         FileService _fileService;
         ConfigService _configService;
+        PptService _pptService;
         PropertySettings _propertySettings;
         ILogger<PptExporterController> _logger;
 
         public PptExporterController(ILogger<PptExporterController> logger,
             FileService fileService, ConfigService configService,
-            PropertySettings propertySettings)
+            PropertySettings propertySettings, PptService pptService)
         {
             _fileService = fileService;
             _configService = configService;
+            _pptService = pptService;
             _propertySettings = propertySettings;
             _logger = logger;
         }
 
         [HttpPost("startPpt/{id}")]
-        public async Task<IActionResult> PostStart(string id, [FromForm] string[] ids)
+        public async Task<IActionResult> PostStart(string id, [FromBody] IdDto idsDto)
         {
+            string[] ids = idsDto.ids;
+            _logger.LogInformation("id = {}, ids = {}", new object[] { id, ids });
             await SendStatus(id, _propertySettings.StatusBeginMessage);
 
             ConfigDto config = await _configService.GetConfig(id);
-            IPresentation presentation = null;
+
+            MemoryStream endFileStream = null;
             if (config.PptId != null)
             {
                 using (Stream fileStream = await _fileService.Download(config.PptId))
                 {
-                    try
-                    {
-                        presentation = new PresentationFactory().ReadPresentation(fileStream);
-                    }
-                    // Ne álljon le, ha nincs beadva PPT
-                    catch (Exception) { }
+                    endFileStream = await _pptService.CreatePpt(fileStream, config, ids);
                 }
             }
-            if (presentation == null)
+            if (endFileStream == null)
             {
-                presentation = new PresentationFactory().CreatePresentation();
+                endFileStream = await _pptService.CreatePpt(null, config, ids);
             }
+            _logger.LogDebug("stream: {}", endFileStream.ToArray());
 
-            for (int i = 0; i < ids.Length; i++)
-            {
-                ISlide slide = presentation.Slides.InsertEmptySlide(config.AfterSlide + i, presentation.LayoutSlides[0]);
-                using Stream imageStream = await _fileService.Download(ids[i]);
-                IPPImage img = presentation.Images.AddImage(imageStream);
-                var size = presentation.SlideSize.Size;
-                slide.Shapes.AddPictureFrame(ShapeType.Rectangle, size.Width - img.Width / 2,
-                    size.Height - img.Height / 2, img.Width, img.Height, img);
-            }
-
-            using MemoryStream endFileStream = new MemoryStream();
-            presentation.Save(endFileStream, SaveFormat.Pptx);
             string endFilename = "Result_" + id + ".pptx";
             string endFileId = await _fileService.Upload(endFilename, endFileStream.ToArray());
             await _fileService.SaveEndId(endFileId, endFilename);
@@ -95,6 +82,11 @@ namespace PptExporter.Controllers
             {
                 _logger.LogWarning("Status not sent: " + e.Message);
             }
+        }
+
+        public class IdDto
+        {
+            public string[] ids { get; set; }
         }
     }
 }

@@ -39,6 +39,7 @@ namespace PptExporter
 
             services.AddSingleton<FileService>();
             services.AddSingleton<ConfigService>();
+            services.AddSingleton<PptService>();
 
             services.AddControllers().AddNewtonsoftJson();
             services.AddCors(options =>

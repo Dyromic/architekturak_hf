@@ -52,6 +52,11 @@ namespace PptExporter.Services
                     if (int.TryParse(item.Value.ToString(), out int x)) 
                         config.AfterSlide = x;
                 }
+                if (item.Key == _propSettings.MaxSlidesProp)
+                {
+                    if (int.TryParse(item.Value.ToString(), out int x))
+                        config.MaxSlides = x;
+                }
                 else if (item.Key == _propSettings.AnimationProp)
                     switch (item.Value)
                     {

@@ -8,6 +8,7 @@ namespace PptExporter.Models
     public class ConfigDto
     {
         public int AfterSlide { get; set; } = 0;
+        public int MaxSlides { get; set; } = 0;
         public AnimationType Animation { get; set; } = AnimationType.Simple;
         public string PptId { get; set; }
     }

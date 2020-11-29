@@ -40,7 +40,7 @@ namespace PptExporter.Services
         public async Task SaveEndId(string fileId, string fileName)
         {
             dynamic doc = new ExpandoObject();
-            ((IDictionary<string, object>)doc).Add(_propertySettings.EndIdName, fileId);
+            ((IDictionary<string, object>)doc).Add(_propertySettings.EndIdName, new ObjectId(fileId));
             ((IDictionary<string, object>)doc).Add(_propertySettings.EndFileName, fileName);
 
             await _endFiles.InsertOneAsync(doc);
