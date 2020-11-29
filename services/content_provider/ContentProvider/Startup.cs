@@ -46,7 +46,7 @@ namespace ContentProvider
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             
             app.UseRouting();
 

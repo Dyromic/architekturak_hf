@@ -39,6 +39,12 @@ namespace ConversionConfiguration.Controllers
             return await _fileService.Get();
         }
 
+        [HttpGet("files/{id}")]
+        public async Task<ActionResult<List<FileDto>>> GetFiles(string id)
+        {
+            return await _fileService.Get();
+        }
+
         [HttpPost("files")]
         public async Task<IActionResult> PostFiles([FromForm] IFormFile file)
         {

@@ -4,9 +4,11 @@
         hostname: ${PPT_NAME}
         build: .
         ports:
-            - "27002:80"
+            - "27002:443"
         networks:
             - database_svg2ppt
+        volumes:
+            - ${ASPNETCORE_SSL_PATH}:/https:ro
         env_file: 
             - ../../../.env
         environment: 
