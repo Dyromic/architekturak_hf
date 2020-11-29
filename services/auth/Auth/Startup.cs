@@ -27,8 +27,8 @@ namespace Auth
                 options.AddPolicy("CorsPolicy",
                     builder => builder.AllowAnyMethod()
                     .AllowAnyHeader()
+                    .AllowAnyOrigin()
                     //.WithOrigins("http://localhost:3000")
-                    .AllowCredentials()
                 );
             });
             services.Configure<DatabaseSettings>(Configuration.GetSection(nameof(DatabaseSettings)));

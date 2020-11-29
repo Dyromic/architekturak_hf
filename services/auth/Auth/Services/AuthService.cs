@@ -92,14 +92,11 @@ namespace Auth.Services
             return regex.Match(password).Success;
         }
 
-        private String GenerateJWT(UserEntity user)
+        private string GenerateJWT(UserEntity user)
         {
 
             var mySecret = configuration["SecretKey"];
             var mySecurityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(mySecret));
-
-            var myIssuer = "";
-            var myAudience = "";
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -112,9 +109,7 @@ namespace Auth.Services
                     new Claim(ClaimTypes.GivenName, user.LastName)
                 }),
                 Expires = DateTime.UtcNow.AddHours(12),
-                Issuer = myIssuer,
-                Audience = myAudience,
-                SigningCredentials = new SigningCredentials(mySecurityKey, SecurityAlgorithms.HmacSha512Signature)
+                SigningCredentials = new SigningCredentials(mySecurityKey, SecurityAlgorithms.HmacSha256Signature)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
