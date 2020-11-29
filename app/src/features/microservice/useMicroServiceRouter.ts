@@ -24,26 +24,20 @@ export const useMicroService = () => {
 
                 const response = await axios.get(`${ContentProviderAPI}`);
 
-                console.log(response);
-
                 if (response.status === 200) {
-                    console.log("Siker!");
                     const serviceRoutes = response.data as MicroServiceEndpoints[];
                     serviceRoutes.forEach((item) => {
                         const newMicroService: MicroServiceEndpoints = {
                             name: item.name,
                             endpoints: item.endpoints
                         };
-                        console.log(item);
                         dispatch(addServiceEndpoints(newMicroService));
-                        console.log("Utana");
         
                     });            
                     dispatch(setAvailable(true));
                 } 
 
             } catch (err) {
-                console.log(err)
             }
 
         }
@@ -56,12 +50,9 @@ export const useMicroService = () => {
 
     const post = async (name: MicroServiceName, route: string, data: any) => {
 
-        console.log(`Microservice: ${name}/${route}`);
-        console.log(`   - Available: ${serviceAvailable}`)
         if (!serviceAvailable) return;
         for (let endpoint of services[name]) {
             try {
-                console.log(`POST: ${endpoint}/${route}`);
                 const response = await axios.post(`${endpoint}/${route}`, data);
                 if (response !== undefined && validStatus(response.status)) {
                     return response;
@@ -75,13 +66,10 @@ export const useMicroService = () => {
 
     const get = async (name: MicroServiceName, route: string, options: any) => {
 
-        console.log(`Microservice: ${name}/${route}`);
-        console.log(`   - Available: ${serviceAvailable}`)
         if (!serviceAvailable) return;
         for (let endpoint of services[name]) {
             try {
                 const response = await axios.get(`${endpoint}/${route}`, options);
-                console.log(`GET: ${endpoint}/${route}`);
                 if (response !== undefined && validStatus(response.status)) {
                     return response;
                 }

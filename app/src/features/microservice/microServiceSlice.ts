@@ -33,18 +33,11 @@ const microServiceSlice = createSlice({
     },
     setServiceEndpoints: (state, action: PayloadAction<MicroServiceEndpoints>) => {
         const serviceEndpoint = action.payload;
-       /* if (state.services === undefined) {
-            const newServices: MicroServiceEndpointDictionary = {
-                [serviceEndpoint.name]: [...serviceEndpoint.endpoints]
-            };
-            state.services = newServices;
-        } else {*/
-            state.services[serviceEndpoint.name] = [...serviceEndpoint.endpoints];
-        //}
+        state.services[serviceEndpoint.name] = [...serviceEndpoint.endpoints];
     },
     removeServiceEndpoints: (state, action: PayloadAction<MicroServiceEndpoints>) => {
         const serviceEndpoint = action.payload;
-        if (/*state.services !== undefined &&*/ serviceEndpoint.name in state.services) {
+        if (serviceEndpoint.name in state.services) {
             delete state.services[serviceEndpoint.name];
         }
     },
