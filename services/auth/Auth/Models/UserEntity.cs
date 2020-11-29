@@ -10,7 +10,6 @@ namespace Auth.Models
     public class UserEntity
     {
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         public Guid ID { get; set; }
 
         [BsonRepresentation(BsonType.String)]
@@ -25,8 +24,8 @@ namespace Auth.Models
         [BsonRepresentation(BsonType.String)]
         public string PasswordHash { get; set; }
 
-        [BsonRepresentation(BsonType.String)]
-        public string PasswordSalt { get; set; }
+        [BsonRepresentation(BsonType.Binary)]
+        public byte[] PasswordSalt { get; set; }
 
     }
 

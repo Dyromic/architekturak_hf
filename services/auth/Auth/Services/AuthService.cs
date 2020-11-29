@@ -34,7 +34,7 @@ namespace Auth.Services
         public async Task<string> Login(UserLogin user)
         {
             
-            var foundUser = await _users.Find(u => u.Email == user.Email).FirstAsync();
+            var foundUser = await _users.Find(u => u.Email == user.Email).FirstOrDefaultAsync();
             if (foundUser != null) {
 
                 string hash = CreatePasswordHash(user.Password, foundUser.PasswordSalt);
@@ -50,7 +50,7 @@ namespace Auth.Services
         public async Task<string> Register(UserRegistration user)
         {
             if (!VerifyEmail(user.Email) || !VerifyPassword(user.Password)) return null;
-            var foundUser = await _users.Find(u => u.Email == user.Email).FirstAsync();
+            var foundUser = await _users.Find(u => u.Email == user.Email).FirstOrDefaultAsync();
             if (foundUser != null) {
                 return null;
             }
@@ -88,7 +88,7 @@ namespace Auth.Services
 
         private bool VerifyPassword(string password)
         {
-            Regex regex = new Regex(@"^(?=.*[a - z])(?=.*[A - Z])(?=.*\d)(?=.*[^\da - zA - Z]).{ 8, 25 }$");
+            Regex regex = new Regex(@"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$");
             return regex.Match(password).Success;
         }
 
@@ -122,22 +122,27 @@ namespace Auth.Services
         
         }
 
-        private string CreatePasswordHash(string password, string salt)
+        private string CreatePasswordHash(string password, byte[] salt)
         {
 
-            using var hmac = new HMACSHA512(Encoding.UTF8.GetBytes(salt));
+            using var hmac = new HMACSHA512(salt);
             var passwordInBytes = Encoding.UTF8.GetBytes(password);
             return Encoding.UTF8.GetString(hmac.ComputeHash(passwordInBytes));
 
         }
         private PasswordHash CreatePasswordHash(string password)
         {
+            var salt = new byte[25];
+            using (var random = new RNGCryptoServiceProvider())
+            {
+                random.GetNonZeroBytes(salt);
+            }
 
-            using var hmac = new HMACSHA512();
+            using var hmac = new HMACSHA512(salt);
             var passwordInBytes = Encoding.UTF8.GetBytes(password);
             return new PasswordHash {
                 Password = Encoding.UTF8.GetString(hmac.ComputeHash(passwordInBytes)),
-                Salt = Encoding.UTF8.GetString(hmac.Key)
+                Salt = salt
             };
 
         }

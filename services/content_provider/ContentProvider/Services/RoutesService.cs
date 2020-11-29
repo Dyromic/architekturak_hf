@@ -22,20 +22,23 @@ namespace ContentProvider.Services
         {
 
             var result = new List<MicroService>();
-            var microServices = configuration.GetSection("MicroServices").Get<List<MicroService>>();
+            var microServices = configuration.GetSection("MicroServices").GetChildren();
             foreach (var microService in microServices)
             {
+                var microServiceName = microService.GetSection("ServiceName:0").Value;
+                var microServiceRoutes = microService.GetSection("ServiceEndpoints").Get<List<string>>();
+
                 MicroService selectedMicroserviceRoutes = new MicroService { 
-                    Name = microService.Name,
-                    Routes = new List<string>()
+                    Name = microServiceName,
+                    Endpoints = new List<string>()
                 };
 
-                if (microService.Routes.Count > 3)
+                if (microServiceRoutes.Count > 3)
                 {
-                    selectedMicroserviceRoutes.Routes.AddRange(microService.Routes.GetRandom(3));
+                    selectedMicroserviceRoutes.Endpoints.AddRange(microServiceRoutes.GetRandom(3));
                 }
                 else {
-                    selectedMicroserviceRoutes.Routes.AddRange(microService.Routes);
+                    selectedMicroserviceRoutes.Endpoints.AddRange(microServiceRoutes);
                 }
 
                 result.Add(selectedMicroserviceRoutes);

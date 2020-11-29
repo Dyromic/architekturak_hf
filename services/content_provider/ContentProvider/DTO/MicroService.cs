@@ -10,7 +10,7 @@ namespace ContentProvider.DTO
 
         public string Name { get; set; }
 
-        public List<string> Routes { get; set; }
+        public List<string> Endpoints { get; set; }
 
     }
 }

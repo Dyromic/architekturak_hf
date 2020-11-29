@@ -10,7 +10,7 @@ namespace Auth.DTO
 
         public string Password { get; set; }
 
-        public string Salt { get; set; }
+        public byte[] Salt { get; set; }
 
     }
 }
