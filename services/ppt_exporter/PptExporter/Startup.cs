@@ -40,7 +40,17 @@ namespace PptExporter
             services.AddSingleton<FileService>();
             services.AddSingleton<ConfigService>();
 
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    //.WithOrigins("http://localhost:3000")
+                    .AllowCredentials()
+                );
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,6 +64,8 @@ namespace PptExporter
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 

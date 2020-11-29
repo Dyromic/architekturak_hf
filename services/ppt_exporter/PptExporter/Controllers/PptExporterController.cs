@@ -1,6 +1,9 @@
 ﻿using Aspose.Slides;
 using Aspose.Slides.Export;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using PptExporter.Models;
 using PptExporter.Services;
 using System;
@@ -9,23 +12,28 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace PptExporter.Controllers
 {
     [ApiController]
+    [EnableCors("CorsPolicy")]
     public class PptExporterController : ControllerBase
     {
         FileService _fileService;
         ConfigService _configService;
         PropertySettings _propertySettings;
+        ILogger<PptExporterController> _logger;
 
-        public PptExporterController(FileService fileService, ConfigService configService,
+        public PptExporterController(ILogger<PptExporterController> logger,
+            FileService fileService, ConfigService configService,
             PropertySettings propertySettings)
         {
             _fileService = fileService;
             _configService = configService;
             _propertySettings = propertySettings;
+            _logger = logger;
         }
 
         [HttpPost("startPpt/{id}")]
@@ -43,7 +51,7 @@ namespace PptExporter.Controllers
                     {
                         presentation = new PresentationFactory().ReadPresentation(fileStream);
                     }
-                    // Ne álljon le, ha bármilyen hiba van
+                    // Ne álljon le, ha nincs beadva PPT
                     catch (Exception) { }
                 }
             }
@@ -76,12 +84,17 @@ namespace PptExporter.Controllers
         {
             try
             {
-                var formVariables = new Dictionary<string, string>();
-                formVariables.Add(_propertySettings.StatusProp, message);
-                await new HttpClient().PostAsync(string.Format(_propertySettings.StatusEndpoint, id), 
-                    new FormUrlEncodedContent(formVariables));
+                var content = new StringContent(JsonConvert.SerializeObject(
+                    new Dictionary<string, string> { { _propertySettings.StatusProp, message } }),
+                    Encoding.UTF8, "application/json");
+                var result = await new HttpClient().PostAsync(
+                    string.Format(_propertySettings.StatusEndpoint, id), content);
+                _logger.LogDebug("Response: {}", result);
             }
-            catch (Exception) { }
+            catch (Exception e)
+            {
+                _logger.LogWarning("Status not sent: " + e.Message);
+            }
         }
     }
 }

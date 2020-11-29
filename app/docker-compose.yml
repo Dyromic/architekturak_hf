@@ -1,0 +1,7 @@
+﻿services:
+    configuration:    
+        container_name: app
+        hostname: app
+        build: .
+        ports:
+            - "80:80"

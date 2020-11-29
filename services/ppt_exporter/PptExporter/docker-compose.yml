@@ -19,7 +19,7 @@
             PropertySettings:AfterSlideProp: AfterSlide
             PropertySettings:AnimationProp: Animation
             PropertySettings:PptFileIdProp: PptFileId
-            PropertySettings:StatusEndpoint: ${STATUS_NAME}/{0}
+            PropertySettings:StatusEndpoint: http://${STATUS_NAME}/status/{0}
             PropertySettings:StatusProp: ${PROPERTY_STATUS}
             PropertySettings:StatusBeginMessage: Processing PPT
             PropertySettings:StatusEndMessage: Done

@@ -33,6 +33,7 @@ namespace Status.Controllers
         [HttpPost("/status/{id}")]
         public async Task<IActionResult> Post([FromRoute] string id, [FromBody] StatusDto status)
         {
+            _logger.LogInformation("Post status: id = {}, status = {}", new object[] { id, status.status});
             await _statusService.Put(id, status.status);
             return Ok();
         }
