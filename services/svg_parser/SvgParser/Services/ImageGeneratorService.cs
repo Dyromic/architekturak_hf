@@ -1,4 +1,5 @@
-﻿using Svg;
+﻿using Microsoft.Extensions.Logging;
+using Svg;
 using SvgParser.Models;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,12 @@ namespace SvgParser.Services
     public class ImageGeneratorService
     {
         private PropertySettings _propertySettings;
+        private ILogger<ImageGeneratorService> _logger;
 
-        public ImageGeneratorService(PropertySettings propertySettings)
+        public ImageGeneratorService(PropertySettings propertySettings, ILogger<ImageGeneratorService> logger)
         {
             _propertySettings = propertySettings;
+            _logger = logger;
         }
 
         public void SetVisibilityForPage(ref SvgDocument document, int page)
@@ -41,6 +44,7 @@ namespace SvgParser.Services
             {
                 if (element.CustomAttributes.TryGetValue(_propertySettings.PagesAttributeName, out string pages))
                 {
+                    _logger.LogInformation(pages);
                     foreach (var row in pages.Split(","))
                     {
                         if (int.TryParse(row, out int page))

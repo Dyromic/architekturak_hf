@@ -16,8 +16,8 @@
             DatabaseSettings:ConfigsCollectionName: ${COLLECTION_CONFIGS}
             DatabaseSettings:ConnectionString: mongodb://${MONGO_DB_USERNAME}:${MONGO_DB_PASSWORD}@${MONGO_NAME}:27017/?authSource=${MONGO_DATABASE}
             PropertySettings:SvgFileIdPropName: SvgFileId
-            PropertySettings:PagesAttributeName: Animation
-            PropertySettings:AnimationProp: data-pages
+            PropertySettings:AnimationProp: Animation
+            PropertySettings:PagesAttributeName: data-pages
             PropertySettings:FinishedEndpoint: http://${PPT_NAME}/startPpt/{0}
             PropertySettings:FinishedIdsName: ids
             PropertySettings:StatusEndpoint: http://${STATUS_NAME}/status/{0}

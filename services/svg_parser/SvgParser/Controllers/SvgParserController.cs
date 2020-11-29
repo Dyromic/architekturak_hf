@@ -53,6 +53,7 @@ namespace SvgParser.Controllers
                 document = SvgDocument.Open<SvgDocument>(fileStream);
             }
             int maxPages = _generatorService.GetMaxPage(document);
+            _logger.LogInformation("maxPages: {}", maxPages);
             for (int i = 1; i <= maxPages; i++)
             {
                 _generatorService.SetVisibilityForPage(ref document, i);

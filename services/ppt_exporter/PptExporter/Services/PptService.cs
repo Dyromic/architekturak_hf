@@ -232,7 +232,7 @@ namespace PptExporter.Services
 
         private static SlidePart CreateSlidePart(PresentationPart presentationPart, Stream imageStream)
         {
-            SlidePart slidePart1 = presentationPart.AddNewPart<SlidePart>("rId3");
+            SlidePart slidePart1 = presentationPart.AddNewPart<SlidePart>();
             slidePart1.Slide = new Slide(
              new CommonSlideData(
                  new ShapeTree(
