@@ -1,9 +1,13 @@
 using ContentProvider.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using System.Diagnostics;
+using System.IO;
 
 namespace ContentProvider
 {
@@ -19,13 +23,10 @@ namespace ContentProvider
         public void ConfigureServices(IServiceCollection services)
         {
 
-            var webContent = Configuration["WebContent"];
-
             services.AddControllers().AddNewtonsoftJson();
-
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = webContent;
+                configuration.RootPath = "www";
             });
 
             services.AddCors(options =>
@@ -54,12 +55,16 @@ namespace ContentProvider
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers(); 
+                //endpoints.MapFallbackToFile("/index.html");
             });
 
+            app.UseStaticFiles();
+
+            app.UseSpaStaticFiles();
             app.UseSpa(options => 
-            { 
-  
+            {
+                //options.Options.SourcePath = webContent;
             });
 
         }

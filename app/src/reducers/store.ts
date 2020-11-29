@@ -4,8 +4,8 @@ import { useDispatch } from 'react-redux';
 //import todosReducer from 'features/todos/todosSlice'
 //import visibilityFilterReducer from 'features/filters/filtersSlice'
 
-import authReducer from '../features/auth/authSlice';
-import microServiceReducer from '../features/microservice/microServiceSlice';
+import authReducer from './../features/auth/authSlice';
+import microServiceReducer from './../features/microservice/microServiceSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,

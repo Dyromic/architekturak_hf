@@ -20,6 +20,7 @@ namespace ContentProvider
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseWebRoot("www");
                     webBuilder.UseStartup<Startup>();
                 });
     }

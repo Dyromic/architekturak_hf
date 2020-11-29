@@ -27,7 +27,7 @@ namespace Auth.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<String>> Login([FromBody] UserLogin user )
+        public async Task<ActionResult<string>> Login([FromBody] UserLogin user )
         {
             string token = await _loginService.Login(user);
             if (token != null)
@@ -39,14 +39,14 @@ namespace Auth.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<String>> Register([FromBody] UserRegistration user)
+        public async Task<ActionResult<string>> Register([FromBody] UserRegistration user)
         {
             string token = await _loginService.Register(user);
             if (token != null)
             {
                 return Ok(new { Token = token });
             }
-            return BadRequest();
+            return BadRequest("Can't register.");
 
         }
 

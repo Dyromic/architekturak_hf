@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux'
 import { useHistory } from "react-router-dom";
 
 import axios from 'axios'
-import jwt_decode from 'jwt-decode'
+import jwtDecode from 'jwt-decode'
 
 import { useAppDispatch, RootState, AppDispatch } from '../../reducers/store'
-import { LoginOnEndpoint, RegisterOnEndpoint, setAuthentication, removeAuthentication } from './authSlice'
+import { setAuthentication, removeAuthentication } from './authSlice'
 
 import { useMicroService as useMicroServiceRouter } from '../microservice/useMicroServiceRouter'
 
@@ -24,17 +24,15 @@ export const useJWTAuth = () => {
        
       return async (dispatch: AppDispatch) => {
 
-        console.log("Hali");
-
-        const response = await microServiceRouter.post('auth', '/login', {
+        const response = await microServiceRouter.post('auth', 'login', {
           Email: email,
           Password: password
         });
-        console.log("Hali");
         
         if (response === undefined || response.status !== 200) return;
 
-        const jwtuserclaims = jwt_decode<JWTUserClaims>(response.data);
+        const token = response.data.token;
+        const jwtuserclaims = jwtDecode<JWTUserClaims>(token);
         const user: User = {
           userId: jwtuserclaims.nameid, 
           email: jwtuserclaims.email, 
@@ -42,10 +40,10 @@ export const useJWTAuth = () => {
           lastName: jwtuserclaims.given_name
         };
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
         if (remember) {
-          window.localStorage.setItem("JWTToken", response.data);
+          window.localStorage.setItem("JWTToken", token);
         }
     
         dispatch(setAuthentication(user));
@@ -66,17 +64,18 @@ export const useJWTAuth = () => {
   
       return async (dispatch: AppDispatch) => {
 
-        const response = await microServiceRouter.post('auth', '/register',  {
+        const response = await microServiceRouter.post('auth', 'register',  {
           Email: email,
           FirstName: firstName,
           LastName: lastName,
           Password: password
         });
-        
+
 
         if (response === undefined || response.status !== 200) return;
 
-        const jwtuserclaims = jwt_decode<JWTUserClaims>(response.data);
+        const token = response.data.token;
+        const jwtuserclaims = jwtDecode<JWTUserClaims>(token);
         const user: User = {
           userId: jwtuserclaims.nameid, 
           email: jwtuserclaims.email, 
@@ -84,23 +83,17 @@ export const useJWTAuth = () => {
           lastName: jwtuserclaims.given_name
         };
 
-        axios.defaults.headers.common['Authorization'] = `Bearer ${response.data}`;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   
         dispatch(setAuthentication(user));
-
-        history.push(routes.dashboard);
 
       };
 
     };
 
-    const isAuthenticated = () => {
-        return authenticated;
-    }
-
     return {
         user,
-        isAuthenticated,
+        authenticated,
         Login,
         Logout,
         Register
