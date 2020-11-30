@@ -17,6 +17,9 @@ namespace ConversionConfiguration.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string FileId { get; set; }
 
+        //[BsonId]
+        public Guid UserId { get; set; }
+
         public string Name { get; set; }
     }
 }

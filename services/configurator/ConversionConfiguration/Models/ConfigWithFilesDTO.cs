@@ -1,23 +1,22 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace ConversionConfiguration.Models
 {
-    public class ConfigEntity
+
+    public class ConfigWithFilesDTO
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string _id { get; set; }
+        public string ID { get; set; }
         public int AfterSlide { get; set; }
         public int MaxImages { get; set; }
         public string PptFileId { get; set; }
         public string SvgFileId { get; set; }
         public string Animation { get; set; }
-        public Guid UserId { get; set; }
+        public IEnumerable<FileEntity> SvgFile { get; set; }
+        public IEnumerable<FileEntity> PptFile { get; set; }
+        public IEnumerable<StatusEntity> Status { get; set; }
 
     }
 }

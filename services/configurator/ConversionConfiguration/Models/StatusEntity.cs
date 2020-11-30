@@ -7,17 +7,13 @@ using System.Threading.Tasks;
 
 namespace ConversionConfiguration.Models
 {
-    public class ConfigEntity
+    public class StatusEntity
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string _id { get; set; }
-        public int AfterSlide { get; set; }
-        public int MaxImages { get; set; }
-        public string PptFileId { get; set; }
-        public string SvgFileId { get; set; }
-        public string Animation { get; set; }
-        public Guid UserId { get; set; }
-
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string ConfigId { get; set; }
+        public string Status { get; set; }
     }
 }

@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -38,12 +40,14 @@ namespace ConversionConfiguration.Controllers
         [HttpGet("files")]
         public async Task<ActionResult<List<FileDto>>> GetFiles()
         {
-            return await _fileService.Get();
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return await _fileService.Get(userId);
         }
 
         [HttpGet("files/{id}")]
         public async Task<IActionResult> GetFiles(string id)
         {
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             Stream stream = null;
             try
             {
@@ -61,24 +65,28 @@ namespace ConversionConfiguration.Controllers
         [HttpPost("files")]
         public async Task<IActionResult> PostFiles([FromForm] IFormFile file)
         {
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             if (file == null)
             {
                 return BadRequest();
             }
-            await _fileService.Add(file.FileName, file.OpenReadStream());
-            return Ok();
+            var id = await _fileService.Add(file.FileName, userId, file.OpenReadStream());
+            return Ok(new {Id = id});
         }
 
-        [HttpGet("configuration")]
-        public async Task<ActionResult<ConfigDto>> GetConfigutation()
+        [HttpGet("configs")]
+        public IActionResult GetConfigutation()
         {
-            return await _configService.Get();
+
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return Ok(new { Configs = _configService.Get(userId) });
         }
 
-        [HttpPut("configuration")]
+        [HttpPut("configs")]
         public async Task<ActionResult<string>> PutConfiguration([FromBody] ConfigDto config)
         {
-            return await _configService.Put(config);
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return await _configService.Put(config, userId);
         }
 
         [HttpPost("start/{id}")]

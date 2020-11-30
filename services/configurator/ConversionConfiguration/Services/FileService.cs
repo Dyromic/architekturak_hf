@@ -24,9 +24,9 @@ namespace ConversionConfiguration.Services
             _bucket = new GridFSBucket(database);
         }
 
-        public async Task<List<FileDto>> Get()
+        public async Task<List<FileDto>> Get(Guid userID)
         {
-            return await _files.Find(_ => true)
+            return await _files.Find(f => f.UserId == userID)
                 .Project(e => new FileDto { Id = e.FileId, Name = e.Name } )
                 .ToListAsync();
         }
@@ -42,13 +42,14 @@ namespace ConversionConfiguration.Services
                 .Project(e => e.Name).SingleOrDefaultAsync();
         }
 
-        public async Task<ObjectId> Add(string name, Stream stream)
+        public async Task<ObjectId> Add(string name, Guid userID, Stream stream)
         {
             ObjectId id = await _bucket.UploadFromStreamAsync(name, stream);
             await _files.InsertOneAsync(new FileEntity
             {
                 FileId = id.ToString(),
-                Name = name
+                Name = name,
+                UserId = userID
             });
             return id;
         }
