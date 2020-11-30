@@ -1,6 +1,5 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Route, useHistory } from "react-router-dom";
-//import history from "./../../history";
 
 import { useJWTAuth } from './../../features/auth/JWTAuth'
 import { Visibility } from './Visibility'
@@ -22,13 +21,17 @@ export const AuthorizedRoute: FC<AuthorizedRouteProps> = ({ component: Component
   const auth = useAuthMethod();
   const history = useHistory();
 
-    const canShow = (visible === Visibility.Everybody) 
-            || (visible === Visibility.Authorized && auth.authenticated) 
-            || (visible === Visibility.Unauthorized && !auth.authenticated);
+    useEffect(() => {
 
-    if (!canShow) {
-      history.push(redirect);
-    } 
+      const canShow: boolean = (visible === Visibility.Everybody) 
+      || (visible === Visibility.Authorized && auth.authenticated) 
+      || (visible === Visibility.Unauthorized && !auth.authenticated);
+
+      if (!canShow) {
+        history.push(redirect);
+      } 
+
+    }, [auth, history, redirect, visible]);
 
     return (
       <Route {...rest} render={(props) => (<Component {...props} />)}/>

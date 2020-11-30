@@ -25,8 +25,9 @@ export default function App() {
   useEffect(() => {
 
     dispatch(microservice.requestServiceEndpoints());
-
-  }, []);
+    
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
 
   return (

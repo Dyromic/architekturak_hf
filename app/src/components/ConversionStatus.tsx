@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef } from 'react';
 import {
     AddBox,
     Check,
@@ -19,7 +19,6 @@ import {
   } from "@material-ui/icons";
 import MaterialTable, { Icons } from "material-table";
 import { useConfigurator } from '../features/configurator/useConfigurator';
-import { useAppDispatch } from '../reducers/store';
     
 const tableIcons: Icons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -43,29 +42,9 @@ const tableIcons: Icons = {
 
 export const ConversionStatus = () => {
 
-    const dispatch = useAppDispatch();
     const configurator = useConfigurator();    
 
-    useEffect(() => {
 
-        dispatch(configurator.getFileNames());
-
-        /*const updateTable = () => {
-            console.log("Updated")
-            dispatch(configurator.updateStatus());
-        }
-        
-        const handle = setInterval(updateTable, 20000);
-
-        return () => {
-            clearInterval(handle);
-        };*/
-    console.log(configurator);
-
-
-    }, []);
-
-    
     const convertToFormat = (cat) => {
 
         const data: any[] = [];

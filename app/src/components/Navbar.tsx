@@ -8,7 +8,6 @@ import AppBar from '@material-ui/core/AppBar';
 
 import { useHistory } from "react-router-dom";
 import routes from '../routes';
-import { useAppDispatch } from '../reducers/store';
 import { useJWTAuth } from '../features/auth/JWTAuth';
 import { Visibility } from './auth/Visibility';
 import { JWTAuthorized } from './auth/Authorized';
@@ -50,7 +49,6 @@ export default function Navbar() {
     const classes = useStyles();
     const history = useHistory();
     const auth = useJWTAuth();
-    const dispatch = useAppDispatch();
 
     const redirectToLogin = () => {
         history.push(routes.login);

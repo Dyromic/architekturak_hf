@@ -37,8 +37,7 @@ export interface Configuration {
 };
 
 type ConfigurationState = {
-    configs:  { [id: string]: Configuration },
-    downloaded: boolean
+    configs:  { [id: string]: Configuration }
 };
 
 type StatusChange = {
@@ -47,8 +46,7 @@ type StatusChange = {
 };
 
 const initialConfigurationState: ConfigurationState = {
-    configs: { },
-    downloaded: false
+    configs: { }
 };
 const firstOrUndefined = (arr) => {
     if (!Array.isArray(arr) || arr.length <= 0) return undefined;
@@ -89,16 +87,11 @@ const configurationSlice = createSlice({
     setConfigurationStatus: (state, action: PayloadAction<StatusChange>) => {
         const statusChange = action.payload;
         state.configs[statusChange.configID].Status = statusChange.newStatus;
-    },
-
-    setDownloaded: (state, action: PayloadAction<boolean>) => {
-        const statusChange = action.payload;
-        state.downloaded = statusChange;
     }
 
   }
 })
 
-export const { setConfiguration, setConfigurationStatus,setDownloaded } = configurationSlice.actions
+export const { setConfiguration, setConfigurationStatus } = configurationSlice.actions
 
 export default configurationSlice.reducer
