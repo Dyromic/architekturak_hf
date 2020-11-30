@@ -45,8 +45,8 @@ namespace ConversionConfiguration.Services
         {
 
             var doc = from p in _configs.AsQueryable()
-                      join f1 in _files.AsQueryable() on p.PptFileId equals f1._id into joinedPptFile
-                      join f2 in _files.AsQueryable() on p.SvgFileId equals f2._id into joinedSvgFile
+                      join f1 in _files.AsQueryable() on p.PptFileId equals f1.FileId into joinedPptFile
+                      join f2 in _files.AsQueryable() on p.SvgFileId equals f2.FileId into joinedSvgFile
                       join s in _status.AsQueryable() on p._id equals s.ConfigId into joinedStatus
                       select new ConfigWithFilesDTO()
                       {
