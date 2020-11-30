@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -7,11 +8,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using SvgParser.Models;
 using SvgParser.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SvgParser
@@ -41,6 +44,7 @@ namespace SvgParser
             services.AddSingleton<ImageGeneratorService>();
             services.AddSingleton<ConfigService>();
 
+
             services.AddControllers().AddNewtonsoftJson();
             services.AddCors(options =>
             {
@@ -48,10 +52,23 @@ namespace SvgParser
                     builder => builder
                     .AllowAnyMethod()
                     .AllowAnyHeader()
-                    //.WithOrigins("http://localhost:3000")
-                    .AllowCredentials()
+                    .AllowAnyOrigin()
                 );
             });
+
+            var key = Encoding.ASCII.GetBytes(Configuration["SecretKey"]);
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+                options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,6 +84,8 @@ namespace SvgParser
             app.UseRouting();
 
             app.UseCors("CorsPolicy");
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

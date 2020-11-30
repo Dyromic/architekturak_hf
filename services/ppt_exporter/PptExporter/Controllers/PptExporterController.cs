@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -6,9 +8,7 @@ using PptExporter.Models;
 using PptExporter.Services;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,6 +17,7 @@ namespace PptExporter.Controllers
 {
     [ApiController]
     [EnableCors("CorsPolicy")]
+    [Authorize]
     public class PptExporterController : ControllerBase
     {
         FileService _fileService;
@@ -39,9 +40,10 @@ namespace PptExporter.Controllers
         [HttpPost("startPpt/{id}")]
         public async Task<IActionResult> PostStart(string id, [FromBody] IdDto idsDto)
         {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
             string[] ids = idsDto.ids;
             _logger.LogInformation("id = {}, ids = {}", new object[] { id, ids });
-            await SendStatus(id, _propertySettings.StatusBeginMessage);
+            await SendStatus(id, _propertySettings.StatusBeginMessage, accessToken);
 
             ConfigDto config = await _configService.GetConfig(id);
 
@@ -63,18 +65,20 @@ namespace PptExporter.Controllers
             string endFileId = await _fileService.Upload(endFilename, endFileStream.ToArray());
             await _fileService.SaveEndId(endFileId, endFilename);
 
-            await SendStatus(id, _propertySettings.StatusEndMessage);
+            await SendStatus(id, _propertySettings.StatusEndMessage, accessToken);
             return Ok();
         }
 
-        private async Task SendStatus(string id, string message)
+        private async Task SendStatus(string id, string message, string accessToken)
         {
             try
             {
                 var content = new StringContent(JsonConvert.SerializeObject(
                     new Dictionary<string, string> { { _propertySettings.StatusProp, message } }),
                     Encoding.UTF8, "application/json");
-                var result = await new HttpClient().PostAsync(
+                using var client = new HttpClient(); 
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                var result = await client.PostAsync(
                     string.Format(_propertySettings.StatusEndpoint, id), content);
                 _logger.LogDebug("Response: {}", result);
             }

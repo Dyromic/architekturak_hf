@@ -1,21 +1,22 @@
 ﻿using ConversionConfiguration.Models;
 using ConversionConfiguration.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ConversionConfiguration.Controllers
 {
+    [Authorize]
     [ApiController]
     [EnableCors("CorsPolicy")]
     public class ConversionConfigurationController : ControllerBase
@@ -83,12 +84,16 @@ namespace ConversionConfiguration.Controllers
         [HttpPost("start/{id}")]
         public async Task<IActionResult> PostStart(string id)
         {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+
             try
             {
                 var content = new StringContent(JsonConvert.SerializeObject(
                     new Dictionary<string, string>{ { _propertySettings.StatusProp, "Queued" } }),
                     Encoding.UTF8, "application/json");
-                var result = await new HttpClient().PostAsync(
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                var result = await client.PostAsync(
                     string.Format(_propertySettings.StatusEndpoint, id), content);
                 _logger.LogDebug("Response: {}", result);
             }
@@ -98,7 +103,9 @@ namespace ConversionConfiguration.Controllers
 
             try
             {
-                var result = await new HttpClient().PostAsync(
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                var result = await client.PostAsync(
                     string.Format(_propertySettings.SvgEndpoint, id), null);
                 _logger.LogInformation("Response: {}", result);
                 _logger.LogInformation("Content: {}", await result.Content.ReadAsStringAsync());

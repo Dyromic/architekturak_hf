@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Status.Models;
 using Status.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Status.Controllers
@@ -13,6 +11,7 @@ namespace Status.Controllers
     [ApiController]
     [EnableCors("CorsPolicy")]
     [Route("[controller]")]
+    [Authorize]
     public class StatusController : ControllerBase
     {
         private readonly ILogger<StatusController> _logger;

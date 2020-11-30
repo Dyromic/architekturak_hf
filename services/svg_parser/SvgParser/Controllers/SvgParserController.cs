@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Cors;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -7,18 +9,18 @@ using SvgParser.Models;
 using SvgParser.Services;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SvgParser.Controllers
 {
+
     [ApiController]
     [EnableCors("CorsPolicy")]
+    [Authorize]
     public class SvgParserController : ControllerBase
     {
         private readonly ILogger<SvgParserController> _logger;
@@ -41,8 +43,10 @@ namespace SvgParser.Controllers
         [HttpPost("startSvg/{id}")]
         public async Task<IActionResult> PostStart(string id)
         {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+
             _logger.LogInformation("id = {}", id);
-            await SendStatus(id, _propertySettings.StatusBeginMessage);
+            await SendStatus(id, _propertySettings.StatusBeginMessage, accessToken);
 
             List<string> imageIds = new List<string>();
             string fileId = await _configService.GetFileId(id);
@@ -64,15 +68,19 @@ namespace SvgParser.Controllers
                 imageIds.Add(imgId);
             }
 
-            await SendStatus(id, _propertySettings.StatusEndMessage);
+            await SendStatus(id, _propertySettings.StatusEndMessage, accessToken);
 
             // Call endpoint
             var body = new Dictionary<string, List<string>>() {
                 { _propertySettings.FinishedIdsName, imageIds }
             };
+
             try
             {
-                var result = await new HttpClient().PostAsync(
+
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                var result = await client.PostAsync(
                     string.Format(_propertySettings.FinishedEndpoint, id),
                     new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json"));
                 _logger.LogInformation("Response: {}", result);
@@ -84,14 +92,16 @@ namespace SvgParser.Controllers
             return Ok();
         }
 
-        private async Task SendStatus(string id, string message)
+        private async Task SendStatus(string id, string message, string accessToken)
         {
             try
             {
                 var content = new Dictionary<string, string>() { 
                     { _propertySettings.StatusProp, message }
                 };
-                var result = await new HttpClient().PostAsync(string.Format(_propertySettings.StatusEndpoint, id),
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                var result = await client.PostAsync(string.Format(_propertySettings.StatusEndpoint, id),
                     new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json"));
                 _logger.LogDebug("Response: {}", result);
             }
