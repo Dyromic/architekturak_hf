@@ -1,9 +1,6 @@
-import { Avatar, Box, Button, Card, CardContent, CardHeader, Container, CssBaseline, FormControlLabel, Grid, IconButton, Link, makeStyles, Paper, TextField, Typography } from '@material-ui/core';
-import { Title } from '@material-ui/icons';
-import { DropzoneArea } from 'material-ui-dropzone';
-import React, { FC, useState } from 'react'
+import { Button, Card, CardContent, CardHeader, CssBaseline, Grid, makeStyles, Typography } from '@material-ui/core';
+import React, { FC } from 'react'
 import { FileUploader } from './form/file/FileUploader';
-import { useConfigurator } from '../features/configurator/useConfigurator';
 
 interface PPTUploaderProps {
 
@@ -42,12 +39,12 @@ const useStyles = makeStyles((theme) => ({
 export const PPTUploader: FC<PPTUploaderProps> = ({ ...rest}: PPTUploaderProps) => {
 
     const classes = useStyles();
-    const config = useConfigurator();
-    const [files, setFiles] = useState<any[]>([]);
+    //const config = useConfigurator();
+    //const [files, setFiles] = useState<any[]>([]);
 
-    const onChangeHandle = (files) => {
+    /*const onChangeHandle = (files) => {
         setFiles(files);
-    };
+    };*/
 
     return (
         <Card>
@@ -58,6 +55,9 @@ export const PPTUploader: FC<PPTUploaderProps> = ({ ...rest}: PPTUploaderProps) 
             <CssBaseline />
             <div className={classes.paper}>
                 <form className={classes.form} noValidate>
+                    <div>
+                    <FileUploader placeholder="SVG file" fullWidth id="svg"/>
+                    </div><FileUploader placeholder="Powerpoint file" fullWidth id="ppt"/>
                     {/*<DropzoneArea  acceptedFiles={[".svg"]} showPreviewsInDropzone showFileNames maxFileSize={30000000} onChange={onChangeHandle}/>
                     */}<Button
                         type="button"
