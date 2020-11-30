@@ -26,7 +26,7 @@ export default function App() {
 
     dispatch(microservice.requestServiceEndpoints());
 
-  }, [dispatch, microservice]);
+  }, []);
 
 
   return (

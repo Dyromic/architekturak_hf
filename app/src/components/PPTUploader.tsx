@@ -3,6 +3,7 @@ import { Title } from '@material-ui/icons';
 import { DropzoneArea } from 'material-ui-dropzone';
 import React, { FC, useState } from 'react'
 import { FileUploader } from './form/file/FileUploader';
+import { useConfigurator } from '../features/configurator/useConfigurator';
 
 interface PPTUploaderProps {
 
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
 export const PPTUploader: FC<PPTUploaderProps> = ({ ...rest}: PPTUploaderProps) => {
 
     const classes = useStyles();
-    const useConfigurator = 
+    const config = useConfigurator();
     const [files, setFiles] = useState<any[]>([]);
 
     const onChangeHandle = (files) => {
@@ -57,14 +58,14 @@ export const PPTUploader: FC<PPTUploaderProps> = ({ ...rest}: PPTUploaderProps) 
             <CssBaseline />
             <div className={classes.paper}>
                 <form className={classes.form} noValidate>
-                    <DropzoneArea  acceptedFiles={[".svg"]} showPreviewsInDropzone showFileNames maxFileSize={30000000} onChange={onChangeHandle}/>
-                    <Button
+                    {/*<DropzoneArea  acceptedFiles={[".svg"]} showPreviewsInDropzone showFileNames maxFileSize={30000000} onChange={onChangeHandle}/>
+                    */}<Button
                         type="button"
                         fullWidth
                         variant="contained"
                         color="primary"
                         className={classes.submit}
-                    >
+                        >
                     Start conversion
                     </Button>
                     <Grid container>

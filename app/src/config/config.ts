@@ -1,1 +1,1 @@
-export const ContentProviderAPI = 'https://localhost:5001/api/routes';
+export const ContentProviderAPI = 'https://localhost:27000/api/routes';

@@ -48,29 +48,48 @@ export const ConversionStatus = () => {
 
     useEffect(() => {
 
+        dispatch(configurator.getFileNames());
 
-        const updateTable = () => {
-            dispatch(configurator.getFileNames());
+        /*const updateTable = () => {
+            console.log("Updated")
+            dispatch(configurator.updateStatus());
         }
-        updateTable();
-        const handle = setInterval(updateTable, 2000);
+        
+        const handle = setInterval(updateTable, 20000);
 
         return () => {
             clearInterval(handle);
-        };
+        };*/
+    console.log(configurator);
 
-    }, [dispatch, configurator]);
 
+    }, []);
+
+    
+    const convertToFormat = (cat) => {
+
+        const data: any[] = [];
+        for (let key in cat) {
+            const c = cat[key];
+            if (/*c.PptFile && c.SvgFile && */c.Status) data.push({ 
+                svgname: "",//c.SvgFile.Name, 
+                pptname: "",//c.PptFile.Name, 
+                status: c.Status
+            });
+        }
+        return data;
+    };
 
 
     return (
         <MaterialTable
             icons={tableIcons}
             columns={[
-                { title: 'Filename', field: 'name' },
+                { title: 'SVG Filename', field: 'svgname' },
+                { title: 'PPT Filename', field: 'pptname' },
                 { title: 'Status', field: 'status' }
             ]}
-            data={configurator.files.map((f) => ({ name: f.name, status: f.status}))} 
+            data={convertToFormat(configurator.configs)} 
             actions={[
               {
                 icon: Save,

@@ -18,12 +18,15 @@ export const useMicroService = () => {
 
     const requestServiceEndpoints = () => async (dispatch: AppDispatch) => {
 
+        console.log("Request endpoints")
+
         if (!serviceAvailable) {
+            console.log("Request endpoints VALID")
+        
 
             try {
 
                 const response = await axios.get(`${ContentProviderAPI}`);
-
                 if (response.status === 200) {
                     const serviceRoutes = response.data as MicroServiceEndpoints[];
                     serviceRoutes.forEach((item) => {
@@ -51,8 +54,10 @@ export const useMicroService = () => {
     const post = async (name: MicroServiceName, route: string, data: any) => {
 
         if (!serviceAvailable) return;
+        console.log("Microservices available!");
         for (let endpoint of services[name]) {
             try {
+                console.log(`POST: ${endpoint}/${route}`);
                 const response = await axios.post(`${endpoint}/${route}`, data);
                 if (response !== undefined && validStatus(response.status)) {
                     return response;
@@ -67,8 +72,10 @@ export const useMicroService = () => {
     const get = async (name: MicroServiceName, route: string, options: any = undefined) => {
 
         if (!serviceAvailable) return;
+        console.log("Microservices available!");
         for (let endpoint of services[name]) {
             try {
+                console.log(`GET: ${endpoint}/${route}`);
                 const response = await axios.get(`${endpoint}/${route}`, options);
                 if (response !== undefined && validStatus(response.status)) {
                     return response;

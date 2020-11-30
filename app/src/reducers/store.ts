@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 
 import authReducer from './../features/auth/authSlice';
 import microServiceReducer from './../features/microservice/microServiceSlice';
-import configurationReducer from './../features/configurator/fileSlice';
+import configurationReducer from '../features/configurator/configurationSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
