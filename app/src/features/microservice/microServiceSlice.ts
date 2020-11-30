@@ -25,7 +25,6 @@ const microServiceSlice = createSlice({
         const serviceEndpoint = action.payload;
         if (state.services[serviceEndpoint.name] !== undefined ) {
             const endpoints = state.services[serviceEndpoint.name];
-            console.log(endpoints)
             state.services[serviceEndpoint.name] = [...endpoints, ...serviceEndpoint.endpoints];
         } else {
             state.services[serviceEndpoint.name] = [...serviceEndpoint.endpoints];

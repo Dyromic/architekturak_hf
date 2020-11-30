@@ -1,9 +1,18 @@
+import { Container } from '@material-ui/core';
 import React from 'react';
-
-import Paperbase from './../components/Paperbase'
-
+import { ConversionStatus } from '../components/ConversionStatus';
+import Navbar from '../components/Navbar';
+import { PPTUploader } from '../components/PPTUploader';
+    
 export default function Dashboard() { 
     return (
-        <Paperbase/>
+        <>
+            <Navbar/>
+            <Container>
+                <PPTUploader />
+                <br/>
+                <ConversionStatus />
+            </Container>
+        </>
     );
 }

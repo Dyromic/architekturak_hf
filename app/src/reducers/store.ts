@@ -6,10 +6,12 @@ import { useDispatch } from 'react-redux';
 
 import authReducer from './../features/auth/authSlice';
 import microServiceReducer from './../features/microservice/microServiceSlice';
+import configurationReducer from './../features/configurator/fileSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  microservice: microServiceReducer
+  microservice: microServiceReducer,
+  config: configurationReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>

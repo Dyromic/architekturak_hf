@@ -8,6 +8,10 @@ import AppBar from '@material-ui/core/AppBar';
 
 import { useHistory } from "react-router-dom";
 import routes from '../routes';
+import { useAppDispatch } from '../reducers/store';
+import { useJWTAuth } from '../features/auth/JWTAuth';
+import { Visibility } from './auth/Visibility';
+import { JWTAuthorized } from './auth/Authorized';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -38,19 +42,29 @@ const useStyles = makeStyles((theme) => ({
     },
     link: {
       margin: theme.spacing(1, 1.5),
+      cursor: "pointer"
     }
 }));
 
 export default function Navbar() {
     const classes = useStyles();
     const history = useHistory();
+    const auth = useJWTAuth();
+    const dispatch = useAppDispatch();
 
     const redirectToLogin = () => {
         history.push(routes.login);
     };
 
     const redirectToHome = () => {
-        history.push(routes.home);
+      history.push(routes.home);
+  };
+  const redirectToDashboard = () => {
+      history.push(routes.dashboard);
+  };
+
+    const logout = () => {
+      auth.Logout();
     };
 
     return (
@@ -66,10 +80,20 @@ export default function Navbar() {
                 <Link variant="button" color="textPrimary" className={classes.link} onClick={redirectToHome}>
                 Home
                 </Link>
+                <JWTAuthorized visible={Visibility.Authorized}>
+                  <Link variant="button" color="textPrimary" className={classes.link} onClick={redirectToDashboard}>
+                  Files
+                  </Link>
+                </JWTAuthorized>
             </nav>
-            <Button color="primary" variant="outlined" className={classes.link} onClick={redirectToLogin}>
-                Login
-            </Button>
+            { !auth.authenticated ? 
+              <Button color="primary" variant="outlined" className={classes.link} onClick={redirectToLogin}>
+                  Login
+              </Button>
+              : <Button color="primary" variant="outlined" className={classes.link} onClick={logout}>
+                  Logout
+              </Button>
+            }
             </Toolbar>
         </AppBar>
     );

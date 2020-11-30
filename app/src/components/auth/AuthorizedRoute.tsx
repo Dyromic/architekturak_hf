@@ -1,14 +1,9 @@
 import React, { FC } from "react";
 import { Route, useHistory } from "react-router-dom";
-import history from "./../../history";
+//import history from "./../../history";
 
 import { useJWTAuth } from './../../features/auth/JWTAuth'
-
-export enum Visibility {
-  Everybody,
-  Authorized,
-  Unauthorized
-};
+import { Visibility } from './Visibility'
 
 type AuthMethodInterface = any;
 type AuthMethodHook = () => AuthMethodInterface;
@@ -25,7 +20,7 @@ interface AuthorizedRouteProps {
 
 export const AuthorizedRoute: FC<AuthorizedRouteProps> = ({ component: Component, visible, redirect, useAuthMethod, ...rest }: AuthorizedRouteProps) => {
   const auth = useAuthMethod();
-  //const history = useHistory();
+  const history = useHistory();
 
     const canShow = (visible === Visibility.Everybody) 
             || (visible === Visibility.Authorized && auth.authenticated) 

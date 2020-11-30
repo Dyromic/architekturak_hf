@@ -12,6 +12,7 @@ import { useMicroService as useMicroServiceRouter } from '../microservice/useMic
 
 import routes from './../../routes'
 import { JWTUserClaims, User } from './User';
+import { useEffect } from 'react';
 
 export const useJWTAuth = () => {
 
@@ -19,6 +20,29 @@ export const useJWTAuth = () => {
     const dispatch = useAppDispatch();
     const history = useHistory();
     const { user, authenticated } = useSelector( (state: RootState) => state.auth )
+
+    const convertJWTUserToUser = (jwtuserclaims: JWTUserClaims) => {
+      const user: User = {
+        userId: jwtuserclaims.nameid, 
+        email: jwtuserclaims.email, 
+        firstName: jwtuserclaims.family_name, 
+        lastName: jwtuserclaims.given_name
+      };
+      return user;
+    };
+
+    useEffect(() => {
+
+      const localStorageToken = localStorage.getItem("JWTToken")
+      if (localStorageToken !== null && localStorageToken !== undefined) {
+        const jwtuserclaims = jwtDecode<JWTUserClaims>(localStorageToken);
+        const user = convertJWTUserToUser(jwtuserclaims);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${localStorageToken}`;
+        dispatch(setAuthentication(user));
+      }
+
+    }, [dispatch]);
+
 
     const Login = (email: string, password: string, remember: boolean) => {
        
@@ -33,12 +57,7 @@ export const useJWTAuth = () => {
 
         const token = response.data.token;
         const jwtuserclaims = jwtDecode<JWTUserClaims>(token);
-        const user: User = {
-          userId: jwtuserclaims.nameid, 
-          email: jwtuserclaims.email, 
-          firstName: jwtuserclaims.family_name, 
-          lastName: jwtuserclaims.given_name
-        };
+        const user = convertJWTUserToUser(jwtuserclaims);
 
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
@@ -76,12 +95,7 @@ export const useJWTAuth = () => {
 
         const token = response.data.token;
         const jwtuserclaims = jwtDecode<JWTUserClaims>(token);
-        const user: User = {
-          userId: jwtuserclaims.nameid, 
-          email: jwtuserclaims.email, 
-          firstName: jwtuserclaims.family_name, 
-          lastName: jwtuserclaims.given_name
-        };
+        const user = convertJWTUserToUser(jwtuserclaims);
 
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   

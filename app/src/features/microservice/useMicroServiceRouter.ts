@@ -64,7 +64,7 @@ export const useMicroService = () => {
 
     };
 
-    const get = async (name: MicroServiceName, route: string, options: any) => {
+    const get = async (name: MicroServiceName, route: string, options: any = undefined) => {
 
         if (!serviceAvailable) return;
         for (let endpoint of services[name]) {
