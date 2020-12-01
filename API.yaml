@@ -5,11 +5,10 @@ info:
   description: SVG-ből generált képeket Power Point prezentációban megfelelő új diákra beillesztő rendszer
   version: 1.0.0
 tags:
-- name: router
 - name: conversion-configuration
 - name: auth
 - name: conversion-status
-- name: user-interface
+- name: content-provider
 - name: svg-parser
 - name: ppt-exporter
 paths:
@@ -17,7 +16,6 @@ paths:
     post:
       tags:
       - auth
-      - router
       summary: Bejelentkezés
       description: Lehetőséget ad a felhasználónak bejelentkezésre
       requestBody:
@@ -42,7 +40,6 @@ paths:
     post:
       tags:
       - auth
-      - router
       summary: Regisztráció
       description: Lehetőséget ad a felhasználónak regisztrációra
       requestBody:
@@ -51,34 +48,26 @@ paths:
             schema:
               type: object
               properties:
-                fullName:
+                Email:
                   type: string
-                  description: Teljes név
-                username:
+                  description: Email cím
+                FirstName:
                   type: string
-                  description: Felhasználónév
-                password:
+                  description: Keresztnév
+                LastName:
+                  type: string
+                  description: Vezetéknév
+                Password:
                   type: string
                   description: Jelszó
                   format: password
       responses:
         "200":
-          description: Sikeres regisztráció
-  /logout:
-    post:
-      tags:
-      - auth
-      - router
-      summary: Kijelentkezés
-      description: Lehetőséget ad a felhasználónak kijelentkezésre
-      responses:
-        "200":
-          description: Sikeres regisztráció
-  /configuration:
+          description: Sikeres bejelentkezés
+  /configs:
     get:
       tags:
       - conversion-configuration
-      - router
       summary: Jelenlegi konfiguráció lekérése
       responses:
         "200":
@@ -90,7 +79,6 @@ paths:
     put:
       tags:
       - conversion-configuration
-      - router
       summary: Konfiguráció módosítása
       requestBody:
         content:
@@ -100,11 +88,38 @@ paths:
       responses:
         "200":
           description: Sikeres módosítás
-  /status:
+  /configs/{id}:
+    get:
+      tags: 
+      - conversion-configuration
+      summary: Adott konfiguráció lekérdezése
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Sikeres lekérés
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+  /status/{id}:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
     get:
       tags:
       - conversion-status
-      - router
       summary: Folyamat státuszának lekérdezése
       responses:
         "200":
@@ -114,25 +129,63 @@ paths:
               schema:
                 type: object
                 properties:
-                  id:
+                  ConfigId:
                     type: string
-                  name:
+                    title: Konfiguráció azonosító
+                  Status:
                     type: string
+                    title: Státusz
+                  ResultFileId:
+                    type: string
+                    title: Eredmény fájl azonosító
+    post:
+      tags:
+      - conversion-status
+      summary: Folyamat státuszának beállítása
+      requestBody:
+        content:
+          application/json:
+              schema:
+                type: object
+                properties:
                   status:
                     type: string
-                    enum:
-                    - queued
-                    - svgParsing
-                    - pptGeneration
-                    - finished
-                  startTime:
+                    title: Státusz
+      responses:
+        "200":
+          description: Sikeres státusz állítás
+  /status/{id}/done:
+    parameters:
+    - name: id
+      in: path
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: string
+    post:
+      tags:
+      - conversion-status
+      summary: Folyamat befejezése státusz beállítása
+      requestBody:
+        content:
+          application/json:
+              schema:
+                type: object
+                properties:
+                  status:
                     type: string
-                    format: date-time
+                    title: Státusz
+                  resultFileId:
+                    type: string
+                    title: Eredmény fájl azonosító
+      responses:
+        "200":
+          description: Sikeres státusz állítás
   /files:
     get:
       tags:
       - conversion-configuration
-      - router
       summary: Feltöltött fájlok listájának lekérdezése
       responses:
         "200":
@@ -151,7 +204,6 @@ paths:
     post:
       tags:
       - conversion-configuration
-      - router
       summary: Új fájl feltöltése
       requestBody:
         content:
@@ -171,8 +223,7 @@ paths:
   /files/{id}:
     get:
       tags:
-      - conversion-status
-      - router
+      - conversion-configuration
       summary: Fájl letöltése
       parameters:
       - name: id
@@ -238,10 +289,19 @@ paths:
       responses:
         "200":
           description: PPT generálás indítása sikeres
-  /start:
+  /start/{id}:
     post:
       tags:
       - conversion-configuration
+      summary: Adott azonosítójú konfigurációval feldolgozás indítása
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
       responses:
         "200":
           description: Feldolgozás indítása sikeres
@@ -256,6 +316,7 @@ components:
     BinaryFile:
       type: string
       format: binary
+      description: Bináris fájl
     Configuration:
       type: object
       properties:
@@ -269,8 +330,11 @@ components:
           type: string
           enum:
           - simple
+          description: Animáció
         pptFileId:
           type: string
+          description: Prezentációs fájl azonosítója
         svgFileId:
           type: string
           nullable: false
+          description: SVG fájl azonosítója
