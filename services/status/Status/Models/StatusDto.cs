@@ -8,5 +8,6 @@ namespace Status.Models
     public class StatusDto
     {
         public string status { get; set; }
+
     }
 }

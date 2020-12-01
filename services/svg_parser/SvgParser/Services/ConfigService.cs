@@ -42,7 +42,8 @@ namespace SvgParser.Services
             }
             if (result?.ContainsKey(_propSettings.SvgFileIdPropName) ?? false)
             {
-                return (string)result[_propSettings.SvgFileIdPropName];
+                var obj = result[_propSettings.SvgFileIdPropName];
+                return obj.ToString();
             }
             return null;
         }

@@ -15,5 +15,8 @@ namespace Status.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string ConfigId { get; set; }
         public string Status { get; set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string ResultFileId { get; set; }
     }
 }

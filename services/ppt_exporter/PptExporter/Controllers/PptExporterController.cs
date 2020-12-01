@@ -65,7 +65,7 @@ namespace PptExporter.Controllers
             string endFileId = await _fileService.Upload(endFilename, endFileStream.ToArray());
             await _fileService.SaveEndId(endFileId, endFilename);
 
-            await SendStatus(id, _propertySettings.StatusEndMessage, accessToken);
+            await SendStatus(id, _propertySettings.StatusEndMessage, accessToken, endFileId);
             return Ok();
         }
 
@@ -76,10 +76,33 @@ namespace PptExporter.Controllers
                 var content = new StringContent(JsonConvert.SerializeObject(
                     new Dictionary<string, string> { { _propertySettings.StatusProp, message } }),
                     Encoding.UTF8, "application/json");
-                using var client = new HttpClient(); 
+                using var client = new HttpClient();
                 client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
                 var result = await client.PostAsync(
                     string.Format(_propertySettings.StatusEndpoint, id), content);
+                _logger.LogDebug("Response: {}", result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning("Status not sent: " + e.Message);
+            }
+        }
+
+        private async Task SendStatus(string id, string message, string accessToken, string resultFileId)
+        {
+            try
+            {
+                var content = new StringContent(JsonConvert.SerializeObject(
+                    new Dictionary<string, string> {
+                        { _propertySettings.StatusProp, message },
+                        { _propertySettings.ResultFileIdProp, resultFileId }
+                    }
+                ),
+                    Encoding.UTF8, "application/json");
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+                var result = await client.PostAsync(
+                    string.Format(_propertySettings.StatusDoneEndpoint, id), content);
                 _logger.LogDebug("Response: {}", result);
             }
             catch (Exception e)

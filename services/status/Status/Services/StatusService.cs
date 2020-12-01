@@ -19,10 +19,10 @@ namespace Status.Services
             _status = database.GetCollection<StatusEntity>(settings.StatusCollectionName);
         }
 
-        public async Task<string> Get(string id)
+        public async Task<StatusEntity> Get(string id)
         {
             var res = await _status.Find(e => e.ConfigId.Equals(new ObjectId(id))).SingleOrDefaultAsync();
-            return res?.Status ?? "";
+            return res;
         }
 
         public async Task Put(string id, string message)
@@ -35,7 +35,20 @@ namespace Status.Services
             }
             else
             {
-                await _status.InsertOneAsync(new StatusEntity { ConfigId = id, Status = message });
+                await _status.InsertOneAsync(new StatusEntity { ConfigId = id, Status = message, ResultFileId = "000000000000000000000000" });
+            }
+        }
+        public async Task Put(string id, string message, string resultFileId)
+        {
+            var filter = new FilterDefinitionBuilder<StatusEntity>().Eq(s => s.ConfigId, id);
+            var update = Builders<StatusEntity>.Update.Set(s => s.Status, message).Set(s => s.ResultFileId, resultFileId);
+            if (await _status.Find(filter).AnyAsync())
+            {
+                await _status.UpdateOneAsync(filter, update);
+            }
+            else
+            {
+                await _status.InsertOneAsync(new StatusEntity { ConfigId = id, Status = message, ResultFileId = resultFileId });
             }
         }
     }

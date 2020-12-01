@@ -53,5 +53,14 @@ namespace ConversionConfiguration.Services
             });
             return id;
         }
+        public async Task DebugAdd(string name, Guid userID)
+        {
+            await _files.InsertOneAsync(new FileEntity
+            {
+                FileId = "00000000000000000000000a",
+                Name = name,
+                UserId = userID
+            });
+        }
     }
 }

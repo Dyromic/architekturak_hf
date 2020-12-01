@@ -71,7 +71,15 @@ namespace ConversionConfiguration.Controllers
                 return BadRequest();
             }
             var id = await _fileService.Add(file.FileName, userId, file.OpenReadStream());
-            return Ok(new {Id = id});
+            return Ok(new { Id = id });
+        }
+
+        [HttpPost("debugfiles/{name}")]
+        public async Task<IActionResult> PostFiles(string name)
+        {
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            await _fileService.DebugAdd(name, userId);
+            return Ok();
         }
 
         [HttpGet("configs")]
@@ -82,11 +90,20 @@ namespace ConversionConfiguration.Controllers
             return Ok(new { Configs = _configService.Get(userId) });
         }
 
+        [HttpGet("configs/{id}")]
+        public IActionResult GetConfigutation(string id)
+        {
+
+            Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            return Ok(new { Config = _configService.Get(userId, id) });
+
+        }
+
         [HttpPut("configs")]
         public async Task<ActionResult<string>> PutConfiguration([FromBody] ConfigDto config)
         {
             Guid userId = Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            return await _configService.Put(config, userId);
+            return Ok(new { Id = await _configService.Put(config, userId) });
         }
 
         [HttpPost("start/{id}")]

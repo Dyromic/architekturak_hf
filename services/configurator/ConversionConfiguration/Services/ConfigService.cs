@@ -62,6 +62,8 @@ namespace ConversionConfiguration.Services
 
                       };
 
+            //_configs.AsQueryable().Join()
+
             return doc.ToList();
 
             /*return await _configs.Find(c => c.UserId == userId).Project(e => new ConfigDto
@@ -73,7 +75,31 @@ namespace ConversionConfiguration.Services
                 SvgFileId = e.SvgFileId
             }).FirstOrDefaultAsync() ?? new ConfigDto();*/
         }
-            
+
+        public ConfigWithFilesDTO Get(Guid userId, string id) {
+
+            var doc = from p in _configs.AsQueryable()
+                      where p._id == id
+                      join f1 in _files.AsQueryable() on p.PptFileId equals f1.FileId into joinedPptFile
+                      join f2 in _files.AsQueryable() on p.SvgFileId equals f2.FileId into joinedSvgFile
+                      join s in _status.AsQueryable() on p._id equals s.ConfigId into joinedStatus
+                      select new ConfigWithFilesDTO()
+                      {
+                          ID = p._id,
+                          AfterSlide = p.AfterSlide,
+                          Animation = p.Animation,
+                          MaxImages = p.MaxImages,
+                          PptFileId = p.PptFileId,
+                          SvgFileId = p.SvgFileId,
+                          PptFile = joinedPptFile,
+                          SvgFile = joinedSvgFile,
+                          Status = joinedStatus
+
+                      };
+            return doc.SingleOrDefault();
+
+        }
+
         public async Task<string> Put(ConfigDto config, Guid userId)
         {
             ConfigEntity entity = new ConfigEntity

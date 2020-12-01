@@ -14,7 +14,11 @@ namespace ConversionConfiguration.Models
         public string _id { get; set; }
         public int AfterSlide { get; set; }
         public int MaxImages { get; set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
         public string PptFileId { get; set; }
+
+        [BsonRepresentation(BsonType.ObjectId)]
         public string SvgFileId { get; set; }
         public string Animation { get; set; }
         public Guid UserId { get; set; }
