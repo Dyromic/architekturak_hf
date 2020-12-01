@@ -17,6 +17,7 @@
     "@types/react-material-ui-form-validator": "^2.1.0",
     "axios": "^0.21.0",
     "history": "^4.0.1",
+    "js-file-download": "^0.4.12",
     "jwt-decode": "^3.0.0",
     "material-table": "^1.68.0",
     "material-ui-dropzone": "^3.5.0",

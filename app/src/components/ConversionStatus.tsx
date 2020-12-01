@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { FC, forwardRef } from 'react';
 import {
     AddBox,
     Check,
@@ -16,10 +16,14 @@ import {
     Remove,
     ViewColumn,
     Save,
+    CheckCircleOutline,
   } from "@material-ui/icons";
 import MaterialTable, { Icons } from "material-table";
-import { useConfigurator } from '../features/configurator/useConfigurator';
-    
+import { useStatus } from '../features/configurator/useStatus';
+import { CircularProgress, Grid, Link, Typography } from '@material-ui/core';
+import { useMicroService } from '../features/microservice/useMicroServiceRouter';
+import FileDownload from 'js-file-download'    
+
 const tableIcons: Icons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -40,25 +44,68 @@ const tableIcons: Icons = {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
+export interface StatusDecorationProps {
+    status: string
+};
+
+export const StatusDecoration: FC<StatusDecorationProps> = ({status}: StatusDecorationProps) => {
+
+    return (
+        <Grid container alignContent="center" spacing={1}>
+            <Grid item>
+                <Typography>{status}</Typography>
+            </Grid>
+            <Grid item>
+                {status !== "Done" 
+                    ? <CircularProgress size={20}/> 
+                    : <CheckCircleOutline size={20}/>
+                }
+            </Grid>
+        </Grid>
+    );
+
+}
+
+
+
 export const ConversionStatus = () => {
 
-    const configurator = useConfigurator();    
+    const status = useStatus();    
+    const services = useMicroService();
 
+    const onDownload = (event, rowData) => (async () => {
+
+        if (rowData.status === 'Done') {
+            const response = await services.get('config', 'files', {
+                responseType: 'blob'
+            });
+            if (!response || response.status !== 200) return;
+            FileDownload(response.data, 'result.pptx');
+        }
+
+            
+        /*    const endpoint = services.getSingleServiceEndpoint('config');
+            if (endpoint !== null) {
+                window.open(`${endpoint}/files/${rowData.resultFileId}`);
+            }
+        }*/
+
+    })();
 
     const convertToFormat = (cat) => {
 
         const data: any[] = [];
         for (let key in cat) {
             const c = cat[key];
-            if (/*c.PptFile && c.SvgFile && */c.Status) data.push({ 
-                svgname: "",//c.SvgFile.Name, 
-                pptname: "",//c.PptFile.Name, 
-                status: c.Status
+            if (c.PptFile && c.SvgFile && c.Status) data.push({ 
+                svgname: c.SvgFile.name, 
+                pptname: c.PptFile.name, 
+                status: c.Status.status,
+                resultFileId: c.Status.resultFileId
             });
         }
         return data;
     };
-
 
     return (
         <MaterialTable
@@ -66,15 +113,16 @@ export const ConversionStatus = () => {
             columns={[
                 { title: 'SVG Filename', field: 'svgname' },
                 { title: 'PPT Filename', field: 'pptname' },
-                { title: 'Status', field: 'status' }
+                { title: 'Status', field: 'status', render: (data) => <StatusDecoration status={data.status}/> }
             ]}
-            data={convertToFormat(configurator.configs)} 
+            data={convertToFormat(status.configs)} 
             actions={[
-              {
+              rowData => ({
                 icon: Save,
                 tooltip: 'Download file',
-                onClick: (event, rowData) => alert("You saved ")
-              }
+                onClick: onDownload,
+                disabled: rowData.status !== "Done"
+              })
             ]}
             title="Converted files"
         />

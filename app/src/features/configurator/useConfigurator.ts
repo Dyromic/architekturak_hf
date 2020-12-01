@@ -1,73 +1,47 @@
+import  { useMicroService } from './../microservice/useMicroServiceRouter'
 
-import { useSelector } from 'react-redux'
-import { useMicroService } from './../microservice/useMicroServiceRouter'
-import { AppDispatch, RootState, useAppDispatch } from "../../reducers/store";
-import { setConfiguration, setConfigurationStatus } from "./configurationSlice";
-import { useEffect } from 'react';
+export interface IConfig {
+    afterSlide: number,
+    maxImages: number, 
+    animation: string,
+    svg: any,
+    ppt: any
+};
 
-type ConfiguratorOptions = {
-    updateMs: number,
-}
+export const useConfigurator = () => {
 
-export const useConfigurator = (options?: ConfiguratorOptions) => {
-
-    const dispatch = useAppDispatch();
     const services = useMicroService();
-    const { configs } = useSelector( (state: RootState) => state.config );
 
-    const getFileNames = () => async (dispatch: AppDispatch) => {
-
-            const response = await services.get('config', 'configs');
-            if (response === undefined || response.status !== 200) return;
-
-            for (let config of response.data.configs) {
-                dispatch(setConfiguration(config));
-            }
-
-    };
-
-    const updateStatus = () => async (dispatch: AppDispatch) => {
-
-        for (let key in configs) {
-            const config = configs[key];
-
-            if (!config.Status || config.Status === "Done") continue;
-
-            const response = await services.get('status', `${config.ID}`);
-            if (response === undefined || response.status !== 200) return;
-
-            dispatch(setConfigurationStatus({
-                configID: config.ID,
-                newStatus: response.data
-            }));
-
-        }
-
-    };
+    const sendConfiguration = async (config: IConfig) => {
     
-    useEffect(() => {
+        const svgFormData = new FormData();
+        svgFormData.append("file", config.svg);
+        const svgResponse = await services.post('config', 'files', svgFormData);
+        if (!svgResponse || svgResponse.status !== 200) return;
 
-        dispatch(getFileNames());
+        const pptFormData = new FormData();
+        pptFormData.append("file", config.ppt);
+        const pptResponse = await services.post('config', 'files', pptFormData);
+        if (!pptResponse || pptResponse.status !== 200) return;
 
-        const updateTable = () => {
-            dispatch(updateStatus());
-        }
-        
-        const handle = setInterval(updateTable, options?.updateMs ?? 3000);
+        const configResponse = await services.put('config', 'configs', {
+            "AfterSlide": config.afterSlide,
+            "MaxImages": config.maxImages,
+            "PptFileId": pptResponse.data.id,
+            "SvgFileId": svgResponse.data.id,
+            "Animation": config.animation
+        });
+        if (!configResponse || configResponse.status !== 200) return;
 
-        return () => {
-            clearInterval(handle);
-        };
+        await services.post('config', `start/${configResponse.data.id}`);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, services.serviceAvailable]);
+        return configResponse.data.id;
 
-
+    };
 
     return {
-        configs,
-        getFileNames,
-        updateStatus,
-    };
+        sendConfiguration
+    }
+
 
 };

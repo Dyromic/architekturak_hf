@@ -9,7 +9,8 @@ import {
     setAvailable,
     addServiceEndpoints, 
     MicroServiceEndpoints,
-    MicroServiceName
+    MicroServiceName,
+    Endpoints
 } from './microServiceSlice'
 
 export const useMicroService = () => {
@@ -43,16 +44,38 @@ export const useMicroService = () => {
 
     };
 
+    const getSingleServiceEndpoint = (name: MicroServiceName): (string | null) => {
+        const items = services[name];
+        if (!serviceAvailable || !items || items.length <= 0) return null;
+        return items[Math.floor(Math.random() * items.length)];
+    };
+
     const validStatus = (status: number): boolean => {
         return status === 400 || status === 401 || status === 200;
-    }
+    };
 
-    const post = async (name: MicroServiceName, route: string, data: any) => {
+    const post = async (name: MicroServiceName, route: string, data?: any) => {
 
         if (!serviceAvailable) return;
         for (let endpoint of services[name]) {
             try {
                 const response = await axios.post(`${endpoint}/${route}`, data);
+                if (response !== undefined && validStatus(response.status)) {
+                    return response;
+                }
+            } catch (err) {
+
+            } 
+        }
+
+    };
+
+    const put = async (name: MicroServiceName, route: string, data: any) => {
+
+        if (!serviceAvailable) return;
+        for (let endpoint of services[name]) {
+            try {
+                const response = await axios.put(`${endpoint}/${route}`, data);
                 if (response !== undefined && validStatus(response.status)) {
                     return response;
                 }
@@ -80,10 +103,12 @@ export const useMicroService = () => {
     };
 
     return {
+        getSingleServiceEndpoint,
         requestServiceEndpoints,
         serviceAvailable,
         post,
-        get
+        get,
+        put
     };
 
 };

@@ -72,9 +72,6 @@ export default function Navbar() {
                 SVG to PPT
             </Typography>
             <nav>
-                <Link variant="button" color="textPrimary" className={classes.link}>
-                Features
-                </Link>
                 <Link variant="button" color="textPrimary" className={classes.link} onClick={redirectToHome}>
                 Home
                 </Link>

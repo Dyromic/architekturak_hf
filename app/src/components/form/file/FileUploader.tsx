@@ -10,9 +10,6 @@ const useStyles = makeStyles((theme: Theme) =>
     formControl: {
         cursor: "pointer"
     },
-    margin: {
-      margin: theme.spacing(1),
-    },
     withoutLabel: {
       marginTop: theme.spacing(3),
     },
@@ -52,14 +49,14 @@ export const FileUploader = ({id, placeholder, formats, multiple, fullWidth, onF
     };
 
     const onFileSelectHandler = (event) => {
-        if (event.target.files) {
+        if (event.target.files && event.target.files.length > 0) {
             setFilePath(event.target.files[0].name);
         }
         if (onFileSelect) onFileSelect(event.target.files);
     };
 
     return (     
-            <FormControl className={clsx(classes.pointer, classes.margin, classes.textField)} fullWidth={fullWidth} variant="outlined">
+            <FormControl className={clsx(classes.pointer, classes.textField)} fullWidth={fullWidth} variant="outlined">
                 <InputLabel className={classes.pointer} >{placeholder}</InputLabel>
                 <label htmlFor={id}>
                     <OutlinedInput className={classes.pointer} readOnly fullWidth={fullWidth} {...props} onClick={onInputClick} disabled 

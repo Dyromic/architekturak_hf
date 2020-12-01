@@ -1,9 +1,10 @@
-import { Button, Card, CardContent, CardHeader, CssBaseline, Grid, makeStyles, Typography } from '@material-ui/core';
-import React, { FC } from 'react'
+import { Button, Card, CardContent, CardHeader, CssBaseline, Grid, makeStyles, MenuItem, Select, TextField, Typography } from '@material-ui/core';
+import React, { FC, useState } from 'react'
+import { IConfig } from '../features/configurator/useConfigurator';
 import { FileUploader } from './form/file/FileUploader';
 
 interface PPTUploaderProps {
-
+    onConfiguration?: (config: IConfig) => any
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -36,36 +37,109 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export const PPTUploader: FC<PPTUploaderProps> = ({ ...rest}: PPTUploaderProps) => {
+interface PPTUploaderState extends IConfig {
+    svg: any,
+    ppt: any,
+    afterSlide: number,
+    maxImages: number,
+    animation: string
+};
+
+export const PPTUploader: FC<PPTUploaderProps> = ({ onConfiguration, ...rest}: PPTUploaderProps) => {
 
     const classes = useStyles();
-    //const config = useConfigurator();
-    //const [files, setFiles] = useState<any[]>([]);
+    const [config, setConfig] = useState<PPTUploaderState>({
+        svg: null,
+        ppt: null,
+        afterSlide: 0,
+        maxImages: 0,
+        animation: "Simple"
+    });
 
-    /*const onChangeHandle = (files) => {
-        setFiles(files);
-    };*/
+    const setAnimation = (event) => {
+        setConfig((state) => ({
+            ...state,
+            animation: event.target.value
+        }));
+    };
+
+    const setAfterSlide = (event) => {
+        setConfig((state) => ({
+            ...state,
+            afterSlide: event.target.value
+        }));
+    };
+    
+    const setMaxImages = (event) => {
+        setConfig((state) => ({
+            ...state,
+            maxImages: event.target.value
+        }));
+    };
+
+    const setPPTFile = (files) => {
+        setConfig((state) => ({
+            ...state,
+            ppt: files[0]
+        }));
+    };
+
+    const setSVGFile = (files) => {
+        setConfig((state) => ({
+            ...state,
+            svg: files[0]
+        }));
+    };
+
+    const sendConfig = () => {
+        if (!config.svg || !config.ppt) return;
+        if (onConfiguration) onConfiguration(config);
+    };
 
     return (
-        <Card>
-            <CardHeader
-            title={<Typography variant="h6">SVG conversion</Typography>}
-            />
+        <Card style={{marginTop: 10}}>
+            <CardHeader title={<Typography variant="h6">SVG conversion</Typography>} />
           <CardContent>
             <CssBaseline />
             <div className={classes.paper}>
                 <form className={classes.form} noValidate>
-                    <div>
-                    <FileUploader placeholder="SVG file" fullWidth id="svg"/>
-                    </div><FileUploader placeholder="Powerpoint file" fullWidth id="ppt"/>
-                    {/*<DropzoneArea  acceptedFiles={[".svg"]} showPreviewsInDropzone showFileNames maxFileSize={30000000} onChange={onChangeHandle}/>
-                    */}<Button
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <FileUploader 
+                                placeholder="SVG file" 
+                                fullWidth id="svg" 
+                                formats=".svg"
+                                onFileSelect={setSVGFile}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <FileUploader 
+                                placeholder="Powerpoint file" 
+                                fullWidth id="ppt" 
+                                formats="application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation"
+                                onFileSelect={setPPTFile}
+                            />
+                        </Grid>
+                        <Grid item xs={4}>
+                            <TextField type="number" fullWidth variant="outlined" label="Max image count" placeholder="Max image count" value={config.maxImages} onChange={setMaxImages}/>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <TextField type="number" fullWidth variant="outlined" label="Place after slide N" placeholder="Place after slide N" value={config.afterSlide} onChange={setAfterSlide}/>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Select  fullWidth variant="outlined" placeholder="Animation" label="Animation" value={config.animation} onChange={setAnimation}>
+                                <MenuItem value="Simple">Simple</MenuItem>
+                            </Select>
+                        </Grid>
+                    </Grid>
+                    <Button
                         type="button"
                         fullWidth
                         variant="contained"
                         color="primary"
                         className={classes.submit}
-                        >
+                        onClick={sendConfig}
+                    >
                     Start conversion
                     </Button>
                     <Grid container>

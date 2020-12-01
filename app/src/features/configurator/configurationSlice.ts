@@ -9,7 +9,8 @@ export type FileInformation = {
 export type StatusInformation = {
     _id: string,
     configId: string,
-    status: string
+    status: string,
+    resultFileId: string
 };
 
 export interface ConfigurationResponse {
@@ -33,7 +34,7 @@ export interface Configuration {
     Animation : string, 
     PptFile?: FileInformation, 
     SvgFile?: FileInformation,
-    Status?: string
+    Status?: StatusInformation
 };
 
 type ConfigurationState = {
@@ -42,7 +43,7 @@ type ConfigurationState = {
 
 type StatusChange = {
     configID: string,
-    newStatus:string
+    newStatus: StatusInformation
 };
 
 const initialConfigurationState: ConfigurationState = {
@@ -68,7 +69,7 @@ const convertResponseToConfiguration = (configResponse: any): Configuration => {
         Animation : configResponse.animation, 
         PptFile: firstOrUndefined(configResponse.pptFile), 
         SvgFile: firstOrUndefined(configResponse.svgFile),
-        Status: firstValueOrUndefined(configResponse.status)
+        Status: firstOrUndefined(configResponse.status)
     };
 }
 
