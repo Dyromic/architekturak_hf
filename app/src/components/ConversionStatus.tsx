@@ -76,7 +76,7 @@ export const ConversionStatus = () => {
     const onDownload = (event, rowData) => (async () => {
 
         if (rowData.status === 'Done') {
-            const response = await services.get('config', 'files', {
+            const response = await services.get('config', `files/${rowData.resultFileId}`, {
                 responseType: 'blob'
             });
             if (!response || response.status !== 200) return;
