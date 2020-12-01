@@ -18,8 +18,8 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link color="inherit" href="#">
+        SVG2PPT
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -85,36 +85,12 @@ const tiers: TierData[] = [
   {
     title: 'Free',
     price: '0',
-    description: ['10 users included', '2 GB of storage', 'Help center access', 'Email support'],
+    description: ['We dont charge any fees', 'Customizable conversion', 'Fast'],
     buttonText: 'Sign up for free',
     buttonVariant: 'outlined',
   },
-  {
-    title: 'Pro',
-    subheader: 'Most popular',
-    price: '15',
-    description: [
-      '20 users included',
-      '10 GB of storage',
-      'Help center access',
-      'Priority email support',
-    ],
-    buttonText: 'Get started',
-    buttonVariant: 'contained',
-  },
-  {
-    title: 'Enterprise',
-    price: '30',
-    description: [
-      '50 users included',
-      '30 GB of storage',
-      'Help center access',
-      'Phone & email support',
-    ],
-    buttonText: 'Contact us',
-    buttonVariant: 'outlined',
-  },
 ];
+
 const footers = [
   {
     title: 'Company',
@@ -144,16 +120,15 @@ export default function Home() {
       {/* Hero unit */}
       <Container maxWidth="sm" component="main" className={classes.heroContent}>
         <Typography component="h1" variant="h2" align="center" color="textPrimary" gutterBottom>
-          Pricing
+          Welcome to SVG2PPT!
         </Typography>
         <Typography variant="h5" align="center" color="textSecondary" component="p">
-          Quickly build an effective pricing table for your potential customers with this layout.
-          It&apos;s built with default Material-UI components with little customization.
+          Quickly convert your SVG files into your beautiful PowerPoint presentations.
         </Typography>
       </Container>
       {/* End hero unit */}
       <Container maxWidth="md" component="main">
-        <Grid container spacing={5} alignItems="flex-end">
+        <Grid container spacing={5} alignItems="center" justify="center">
           {tiers.map((tier) => (
             // Enterprise card is full width at sm breakpoint
             <Grid item key={tier.title} xs={12} sm={tier.title === 'Enterprise' ? 12 : 6} md={4}>
@@ -163,7 +138,7 @@ export default function Home() {
                   subheader={tier.subheader}
                   titleTypographyProps={{ align: 'center' }}
                   subheaderTypographyProps={{ align: 'center' }}
-                  action={tier.title === 'Pro' ? <StarIcon /> : null}
+                  action={tier.title === 'Free' ? <StarIcon /> : null}
                   className={classes.cardHeader}
                 />
                 <CardContent>
@@ -184,7 +159,7 @@ export default function Home() {
                   </ul>
                 </CardContent>
                 <CardActions>
-                  <Button fullWidth variant={tier.buttonVariant} color="primary">
+                  <Button fullWidth variant={tier.buttonVariant} color="primary" href="/register">
                     {tier.buttonText}
                   </Button>
                 </CardActions>

@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, CardHeader, CssBaseline, Grid, makeStyles, MenuItem, Select, TextField, Typography } from '@material-ui/core';
+import { Button, Card, CardContent, CardHeader, CssBaseline, FormControl, Grid, InputLabel, makeStyles, MenuItem, Select, TextField, Typography } from '@material-ui/core';
 import React, { FC, useState } from 'react'
 import { IConfig } from '../features/configurator/useConfigurator';
 import { FileUploader } from './form/file/FileUploader';
@@ -53,7 +53,7 @@ export const PPTUploader: FC<PPTUploaderProps> = ({ onConfiguration, ...rest}: P
         ppt: null,
         afterSlide: 0,
         maxImages: 0,
-        animation: "Simple"
+        animation: ""
     });
 
     const setAnimation = (event) => {
@@ -92,7 +92,7 @@ export const PPTUploader: FC<PPTUploaderProps> = ({ onConfiguration, ...rest}: P
     };
 
     const sendConfig = () => {
-        if (!config.svg || !config.ppt) return;
+        if (!config.svg || !config.ppt || !config.animation) return;
         if (onConfiguration) onConfiguration(config);
     };
 
@@ -127,9 +127,12 @@ export const PPTUploader: FC<PPTUploaderProps> = ({ onConfiguration, ...rest}: P
                             <TextField type="number" fullWidth variant="outlined" label="Place after slide N" placeholder="Place after slide N" value={config.afterSlide} onChange={setAfterSlide}/>
                         </Grid>
                         <Grid item xs={4}>
-                            <Select  fullWidth variant="outlined" placeholder="Animation" label="Animation" value={config.animation} onChange={setAnimation}>
-                                <MenuItem value="Simple">Simple</MenuItem>
-                            </Select>
+                            <FormControl variant="outlined" fullWidth>
+                                <InputLabel id="animation-select-outlined-label">Animation</InputLabel>
+                                <Select labelId="animation-select-outlined-label" label="Animation" fullWidth variant="outlined" value={config.animation} onChange={setAnimation}>
+                                    <MenuItem value="Simple">Simple</MenuItem>
+                                </Select>
+                             </FormControl>
                         </Grid>
                     </Grid>
                     <Button
