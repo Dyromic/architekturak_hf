@@ -52,11 +52,6 @@ const initialConfigurationState: ConfigurationState = {
 const firstOrUndefined = (arr) => {
     if (!Array.isArray(arr) || arr.length <= 0) return undefined;
     return arr[0];
-}
-
-const firstValueOrUndefined = (arr) => {
-    if (!Array.isArray(arr) || arr.length <= 0) return undefined;
-    return arr[0].status;
 };
 
 const convertResponseToConfiguration = (configResponse: any): Configuration => {

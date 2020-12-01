@@ -9,8 +9,7 @@ import {
     setAvailable,
     addServiceEndpoints, 
     MicroServiceEndpoints,
-    MicroServiceName,
-    Endpoints
+    MicroServiceName
 } from './microServiceSlice'
 
 export const useMicroService = () => {

@@ -20,7 +20,7 @@ import {
   } from "@material-ui/icons";
 import MaterialTable, { Icons } from "material-table";
 import { useStatus } from '../features/configurator/useStatus';
-import { CircularProgress, Grid, Link, Typography } from '@material-ui/core';
+import { CircularProgress, Grid, Typography } from '@material-ui/core';
 import { useMicroService } from '../features/microservice/useMicroServiceRouter';
 import FileDownload from 'js-file-download'    
 
