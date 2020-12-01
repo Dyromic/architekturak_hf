@@ -14,9 +14,7 @@ import Container from '@material-ui/core/Container';
 import Navbar from './../components/Navbar';
 import { useHistory } from "react-router-dom";
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
-//import CheckboxValidator from './../components/form/validation/CheckboxValidator'
 
-//import history from "./../history";
 import routes from './../routes';
 import { useAppDispatch } from '../reducers/store';
 import { useJWTAuth } from '../features/auth/JWTAuth';
