@@ -1,17 +1,9 @@
 ---
 openapi: 3.0.0
 info:
-  title: Simple Inventory API
-  description: This is a simple API
-  contact:
-    email: you@your-company.com
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: SVG to PPT
+  description: SVG-ből generált képeket Power Point prezentációban megfelelő új diákra beillesztő rendszer
   version: 1.0.0
-servers:
-- url: https://virtserver.swaggerhub.com/SVGTOPPT/SVGToPPTAPI/1.0.0
-  description: SwaggerHub API Auto Mocking
 tags:
 - name: router
 - name: conversion-configuration
@@ -173,8 +165,9 @@ paths:
         "200":
           description: Sikeres feltöltés
           content:
-            schema:
-              $ref: '#components/schemas/SingleId'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleId'
   /files/{id}:
     get:
       tags:
@@ -231,9 +224,15 @@ paths:
       requestBody:
         description: Beinzertálandó képek azonosítója
         required: true
-        name: "ids"
-        schema:
-          type: string[]
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: string
       tags:
       - ppt-exporter
       responses:
