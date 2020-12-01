@@ -1,4 +1,4 @@
-import React, { FC, forwardRef } from 'react';
+import React, { FC, forwardRef, useEffect } from 'react';
 import {
     AddBox,
     Check,
@@ -23,6 +23,7 @@ import { useStatus } from '../features/configurator/useStatus';
 import { CircularProgress, Grid, Typography } from '@material-ui/core';
 import { useMicroService } from '../features/microservice/useMicroServiceRouter';
 import FileDownload from 'js-file-download'    
+import { useAppDispatch } from '../reducers/store';
 
 const tableIcons: Icons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -66,12 +67,34 @@ export const StatusDecoration: FC<StatusDecorationProps> = ({status}: StatusDeco
 
 }
 
-
-
 export const ConversionStatus = () => {
 
     const status = useStatus();    
     const services = useMicroService();
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+
+        dispatch(status.getConfigurations());
+
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dispatch, services.serviceAvailable]);
+
+    useEffect(() => {
+
+        const updateTable = () => {
+            dispatch(status.updateStatus());
+        }
+        
+        const handle = setInterval(updateTable, 1000);
+
+        return () => {
+            clearInterval(handle);
+        };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dispatch, services.serviceAvailable, status.updateStatus, status]);
 
     const onDownload = (event, rowData) => (async () => {
 
@@ -83,13 +106,6 @@ export const ConversionStatus = () => {
             FileDownload(response.data, 'result.pptx');
         }
 
-            
-        /*    const endpoint = services.getSingleServiceEndpoint('config');
-            if (endpoint !== null) {
-                window.open(`${endpoint}/files/${rowData.resultFileId}`);
-            }
-        }*/
-
     })();
 
     const convertToFormat = (cat) => {
@@ -97,11 +113,11 @@ export const ConversionStatus = () => {
         const data: any[] = [];
         for (let key in cat) {
             const c = cat[key];
-            if (c.PptFile && c.SvgFile && c.Status) data.push({ 
+            if (c.PptFile && c.SvgFile) data.push({ 
                 svgname: c.SvgFile.name, 
                 pptname: c.PptFile.name, 
-                status: c.Status.status,
-                resultFileId: c.Status.resultFileId
+                status:  c.Status?.status ?? "Uploading",
+                resultFileId: c.Status?.resultFileId ?? ""
             });
         }
         return data;

@@ -4,11 +4,7 @@ import { useMicroService } from '../microservice/useMicroServiceRouter'
 import { AppDispatch, RootState } from "../../reducers/store";
 import { setConfiguration, setConfigurationStatus } from "./configurationSlice";
 
-type ConfiguratorOptions = {
-    updateMs: number,
-}
-
-export const useStatus = (options?: ConfiguratorOptions) => {
+export const useStatus = () => {
 
     const services = useMicroService();
     const { configs } = useSelector( (state: RootState) => state.config );
@@ -40,12 +36,10 @@ export const useStatus = (options?: ConfiguratorOptions) => {
         for (let key in configs) {
             const config = configs[key];
 
-            if (!config.Status || config.Status === "Done") continue;
+            if (config.Status && config.Status.status === "Done") continue;
 
             const response = await services.get('status', `${config.ID}`);
             if (response === undefined || response.status !== 200) return;
-
-            console.log(response.data);
 
             dispatch(setConfigurationStatus({
                 configID: config.ID,

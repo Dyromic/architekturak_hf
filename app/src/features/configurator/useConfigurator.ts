@@ -33,14 +33,19 @@ export const useConfigurator = () => {
         });
         if (!configResponse || configResponse.status !== 200) return;
 
-        await services.post('config', `start/${configResponse.data.id}`);
-
         return configResponse.data.id;
 
     };
 
+    const sendStart = async (id: string) => {
+
+        return await services.post('config', `start/${id}`);
+        
+    };
+
     return {
-        sendConfiguration
+        sendConfiguration,
+        sendStart
     }
 
 
