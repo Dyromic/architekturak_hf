@@ -71,7 +71,9 @@ namespace SvgParser.Services
                 {
                     var fromTo = element.Split(":");
                     int from = -1, to = -1;
-                    if (int.TryParse(fromTo[0], out from) || int.TryParse(fromTo[1], out to))
+                    bool fromBool = int.TryParse(fromTo[0], out from);
+                    bool toBool = int.TryParse(fromTo[1], out to);
+                    if ( fromBool || toBool )
                     {
                         if ( (from == -1 && page <= to) 
                             || (from <= page && to == -1)
